@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
+/* ── Design tokens ──────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:           #f4f6f8;
+  --surface:      #ffffff;
+  --border:       #e5e7eb;
+  --border-focus: #4f46e5;
+  --text:         #111827;
+  --muted:        #6b7280;
+  --primary:      #4f46e5;
+  --primary-h:    #4338ca;
+  --primary-ring: #c7d2fe;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Shared table styles ────────────────────────────── */
+.fg-table {
+  width: 100%;
+  font-size: 0.875rem;
+  border-collapse: collapse;
+}
+
+.fg-table thead tr {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.fg-table thead th {
+  padding: 0.625rem 1rem;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.fg-table tbody tr {
+  border-bottom: 1px solid #f9fafb;
+  transition: background-color 0.1s;
+}
+
+.fg-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.fg-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.fg-table tbody td {
+  padding: 0.75rem 1rem;
+  color: #374151;
+  vertical-align: middle;
+}
+
+/* ── Shared filter row ──────────────────────────────── */
+.fg-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* ── CSS-only ring indicator ────────────────────────── */
+.ring-track {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 8px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.ring-fill {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 8px solid transparent;
+  border-top-color: #4f46e5;
+  border-right-color: #4f46e5;
+  transform: rotate(-45deg);
 }
