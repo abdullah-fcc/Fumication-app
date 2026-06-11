@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Shield, LayoutDashboard, Briefcase,
-  Users, Package, FileText,
+  Users, Package, FileText, MapPin,
 } from '@/components/icons';
 import { getStoredUser } from '@/lib/auth';
 import { getNavItemsForRole } from '@/lib/rbac';
@@ -14,6 +14,7 @@ const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   LayoutDashboard,
   Briefcase,
   Users,
+  MapPin,
   Package,
   FileText,
 };

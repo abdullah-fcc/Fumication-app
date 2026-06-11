@@ -28,4 +28,5 @@ export {
   Warehouse,
   ArrowRight,
   X,
+  Navigation,
 } from 'lucide-react';

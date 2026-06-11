@@ -10,6 +10,7 @@ import jobRoutes from './routes/jobs.routes';
 import inventoryRoutes from './routes/inventory.routes';
 import reportRoutes from './routes/reports.routes';
 import locationRoutes from './routes/locations.routes';
+import checkInRoutes from './routes/checkins.routes';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/locations', locationRoutes);
+app.use('/api/check-ins', checkInRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });

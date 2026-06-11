@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { Briefcase, CheckCircle2, Users, AlertTriangle, Clock } from '@/components/icons';
+import { Briefcase, CheckCircle2, Users, AlertTriangle, Clock, MapPin, Calendar } from '@/components/icons';
 import api from '@/lib/api';
+import { getStoredUser } from '@/lib/auth';
 import StatusBadge from '@/components/StatusBadge';
 
-// ─── Metric card (top row) ────────────────────────────────────────────────────
+// ─── Shared helpers ───────────────────────────────────────────────────────────
+
 function MetricCard({
   title, value, sub, subColor = 'text-gray-400', icon, children,
 }: {
@@ -34,20 +36,16 @@ function MetricCard({
   );
 }
 
-// ─── Mini bar (used inside cards) ─────────────────────────────────────────────
 function MiniBar({ label, count, total, color }: {
   label: string; count: number; total: number; color: string;
 }) {
-  // Use fixed Tailwind width steps — avoids any inline style for width
-  const pct   = total > 0 ? Math.round((count / total) * 100) : 0;
-  // Map to nearest 10% Tailwind class
-  const steps = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  const pct     = total > 0 ? Math.round((count / total) * 100) : 0;
+  const steps   = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
   const nearest = steps.reduce((a, b) => Math.abs(b - pct) < Math.abs(a - pct) ? b : a, 0);
   const widthMap: Record<number, string> = {
     0: 'w-0', 10: 'w-[10%]', 20: 'w-1/5', 30: 'w-[30%]', 40: 'w-2/5',
     50: 'w-1/2', 60: 'w-3/5', 70: 'w-[70%]', 80: 'w-4/5', 90: 'w-[90%]', 100: 'w-full',
   };
-
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
@@ -61,7 +59,6 @@ function MiniBar({ label, count, total, color }: {
   );
 }
 
-// ─── CSS-only ring indicator ──────────────────────────────────────────────────
 function RingIndicator({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
@@ -74,7 +71,6 @@ function RingIndicator({ value, label }: { value: number; label: string }) {
   );
 }
 
-// ─── Skeleton loader ──────────────────────────────────────────────────────────
 function RowSkeleton({ count }: { count: number }) {
   return (
     <div className="divide-y divide-gray-50">
@@ -91,7 +87,7 @@ function RowSkeleton({ count }: { count: number }) {
   );
 }
 
-function EmptyState({ message }: { message: string }) {
+function EmptyMsg({ message }: { message: string }) {
   return (
     <div className="py-10 text-center">
       <p className="text-sm text-gray-400">{message}</p>
@@ -99,8 +95,139 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
-export default function DashboardPage() {
+// ─── Worker dashboard ─────────────────────────────────────────────────────────
+
+function WorkerDashboard({ userId }: { userId: string }) {
+  const { data: jobs = [], isLoading } = useQuery({
+    queryKey: ['jobs', 'worker', userId],
+    queryFn: () => api.get(`/api/jobs?worker_id=${userId}`).then((r) => r.data),
+  });
+
+  const allJobs    = jobs as any[];
+  const upcoming   = allJobs.filter((j) => j.status === 'scheduled');
+  const inProgress = allJobs.filter((j) => j.status === 'in_progress');
+  const done       = allJobs.filter((j) => j.status === 'completed');
+
+  // Sort upcoming by nearest deadline first
+  const sortedUpcoming = [...upcoming].sort(
+    (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
+  );
+
+  return (
+    <div>
+      {/* ── Stats row ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+        <MetricCard
+          title="Assigned Jobs"
+          value={allJobs.length}
+          sub={upcoming.length > 0 ? `${upcoming.length} upcoming` : 'No upcoming jobs'}
+          subColor={upcoming.length > 0 ? 'text-indigo-600' : 'text-gray-400'}
+          icon={<Briefcase size={20} />}
+        />
+        <MetricCard
+          title="In Progress"
+          value={inProgress.length}
+          sub={inProgress.length > 0 ? 'Active right now' : 'Nothing active'}
+          subColor={inProgress.length > 0 ? 'text-amber-500' : 'text-gray-400'}
+          icon={<Clock size={20} />}
+        />
+        <MetricCard
+          title="Completed"
+          value={done.length}
+          sub={allJobs.length > 0 ? `of ${allJobs.length} total` : 'No jobs yet'}
+          subColor="text-emerald-600"
+          icon={<CheckCircle2 size={20} />}
+        />
+      </div>
+
+      {/* ── Upcoming jobs ── */}
+      <section className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900">Upcoming Jobs</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Your scheduled tasks and deadlines</p>
+          </div>
+          <Link href="/jobs" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">
+            View all
+          </Link>
+        </div>
+
+        {isLoading ? (
+          <RowSkeleton count={4} />
+        ) : sortedUpcoming.length === 0 ? (
+          <EmptyMsg message="No upcoming jobs assigned to you." />
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {sortedUpcoming.map((job: any) => {
+              const date = new Date(job.scheduled_at);
+              const now  = new Date();
+              const diffMs   = date.getTime() - now.getTime();
+              const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+              const urgency  = diffDays <= 1
+                ? 'text-red-600 bg-red-50 border-red-100'
+                : diffDays <= 3
+                ? 'text-amber-600 bg-amber-50 border-amber-100'
+                : 'text-indigo-600 bg-indigo-50 border-indigo-100';
+              const urgencyLabel = diffDays < 0
+                ? 'Overdue'
+                : diffDays === 0
+                ? 'Today'
+                : diffDays === 1
+                ? 'Tomorrow'
+                : `In ${diffDays} days`;
+
+              return (
+                <div key={job.id} className="px-5 py-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-semibold text-gray-900">{job.title}</p>
+                        <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${urgency}`}>
+                          {urgencyLabel}
+                        </span>
+                      </div>
+
+                      {job.location_name && (
+                        <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
+                          <MapPin size={11} className="flex-shrink-0" />
+                          {job.location_name}
+                        </div>
+                      )}
+
+                      {job.description && (
+                        <p className="text-xs text-gray-400 mt-1 truncate max-w-sm">{job.description}</p>
+                      )}
+                    </div>
+
+                    {/* Deadline block */}
+                    <div className="flex-shrink-0 text-right">
+                      <div className="flex items-center gap-1 text-xs text-gray-500 justify-end">
+                        <Calendar size={11} />
+                        {date.toLocaleDateString('en-PK', {
+                          day: 'numeric', month: 'short', year: 'numeric',
+                        })}
+                      </div>
+                      <div className="flex items-center gap-1 mt-0.5 text-sm font-bold text-indigo-600 justify-end">
+                        <Clock size={13} />
+                        {date.toLocaleTimeString('en-PK', {
+                          hour: '2-digit', minute: '2-digit', hour12: true,
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+// ─── Admin / Manager dashboard ────────────────────────────────────────────────
+
+function AdminDashboard() {
   const { data: jobs = [], isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
     queryFn: () => api.get('/api/jobs').then((r) => r.data),
@@ -130,7 +257,6 @@ export default function DashboardPage() {
       {/* ── Top metrics row ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-5">
 
-        {/* Card 1 — Total Jobs */}
         <MetricCard
           title="Total Jobs"
           value={total}
@@ -145,7 +271,6 @@ export default function DashboardPage() {
           </div>
         </MetricCard>
 
-        {/* Card 2 — Completed */}
         <MetricCard
           title="Completed Jobs"
           value={completed}
@@ -168,7 +293,6 @@ export default function DashboardPage() {
           </div>
         </MetricCard>
 
-        {/* Card 3 — Low Stock */}
         <MetricCard
           title="Low Stock Alerts"
           value={(lowStock as any[]).length}
@@ -198,7 +322,6 @@ export default function DashboardPage() {
       {/* ── Bottom section ── */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
-        {/* Recent Jobs — takes 2 columns */}
         <section className="xl:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <div>
@@ -213,10 +336,9 @@ export default function DashboardPage() {
           {jobsLoading ? (
             <RowSkeleton count={5} />
           ) : recentJobs.length === 0 ? (
-            <EmptyState message="No jobs scheduled yet." />
+            <EmptyMsg message="No jobs scheduled yet." />
           ) : (
             <div className="divide-y divide-gray-50">
-              {/* Table header */}
               <div className="grid grid-cols-12 px-5 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">
                 <span className="col-span-5">Job</span>
                 <span className="col-span-3">Location</span>
@@ -250,10 +372,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        {/* Right column — Workers + Low Stock cards stacked */}
         <div className="flex flex-col gap-5">
-
-          {/* Workers card */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -273,7 +392,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Pending jobs card */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex-1">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -297,8 +415,19 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
+}
+
+// ─── Root page — picks the right dashboard by role ────────────────────────────
+
+export default function DashboardPage() {
+  const user = getStoredUser();
+
+  if (user?.role === 'worker') {
+    return <WorkerDashboard userId={user.id} />;
+  }
+
+  return <AdminDashboard />;
 }

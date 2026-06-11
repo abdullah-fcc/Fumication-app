@@ -1,16 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { getStoredUser } from '@/lib/auth';
+import { Button } from '@/components/ui/Button';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonRows } from '@/components/ui/Skeleton';
-import { Search, Users, UserCheck, UserX } from '@/components/icons';
+import { Plus, Search, Users, UserCheck, UserX } from '@/components/icons';
 
 export default function WorkersPage() {
   const [search, setSearch] = useState('');
+  const currentUser = getStoredUser();
+  const canAdd = currentUser?.role === 'admin' || currentUser?.role === 'manager';
 
   const { data: workers = [], isLoading } = useQuery({
     queryKey: ['workers'],
@@ -27,6 +32,16 @@ export default function WorkersPage() {
       <PageHeader
         title="Workers"
         subtitle="Field staff and their assignment status"
+        actions={
+          canAdd ? (
+            <Link href="/workers/new">
+              <Button size="sm">
+                <Plus size={15} />
+                Add Worker
+              </Button>
+            </Link>
+          ) : undefined
+        }
       />
 
       <Card>

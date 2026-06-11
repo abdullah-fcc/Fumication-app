@@ -53,18 +53,29 @@ export async function createInventoryItem(req: AuthRequest, res: Response) {
 }
 
 export async function updateInventoryItem(req: AuthRequest, res: Response) {
-  const { name, quantity, low_stock_threshold, supplier } = req.body;
+  const { name, description, unit, quantity, low_stock_threshold, supplier } = req.body;
+  if (!name || !unit) {
+    res.status(400).json({ error: 'name and unit are required' });
+    return;
+  }
   try {
     const result = await pool.query(
       `UPDATE inventory SET
-        name = COALESCE($1, name),
-        quantity = COALESCE($2, quantity),
-        low_stock_threshold = COALESCE($3, low_stock_threshold),
-        supplier = COALESCE($4, supplier),
-        updated_at = NOW()
-       WHERE id = $5 RETURNING *`,
-      [name, quantity, low_stock_threshold, supplier, req.params.id]
+        name                = $1,
+        description         = COALESCE($2, description),
+        unit                = $3,
+        quantity            = $4,
+        low_stock_threshold = $5,
+        supplier            = COALESCE($6, supplier),
+        updated_at          = NOW()
+       WHERE id = $7
+       RETURNING *`,
+      [name, description ?? null, unit, quantity, low_stock_threshold, supplier ?? null, req.params.id]
     );
+    if (!result.rows[0]) {
+      res.status(404).json({ error: 'Item not found' });
+      return;
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

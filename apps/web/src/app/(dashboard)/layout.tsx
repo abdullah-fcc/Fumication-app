@@ -8,11 +8,12 @@ import { getToken, getStoredUser } from '@/lib/auth';
 import { canAccess } from '@/lib/rbac';
 
 const pageTitles: Record<string, string> = {
-  '/':          'Dashboard',
-  '/jobs':      'Jobs',
-  '/workers':   'Workers',
-  '/inventory': 'Inventory',
-  '/reports':   'Reports',
+  '/':           'Dashboard',
+  '/jobs':       'Jobs',
+  '/workers':    'Workers',
+  '/locations':  'Locations',
+  '/inventory':  'Inventory',
+  '/reports':    'Reports',
 };
 
 type GuardState = 'loading' | 'ready' | 'redirect';
@@ -56,7 +57,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <Sidebar />
       <div className="flex flex-col flex-1 ml-16 min-w-0">
-        <Header title={pageTitles[pathname]} />
+        <Header title={pageTitles[Object.keys(pageTitles).find((r) => pathname === r || pathname.startsWith(r + '/')) ?? ''] } />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
