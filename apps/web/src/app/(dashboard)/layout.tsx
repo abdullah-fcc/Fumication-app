@@ -58,11 +58,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="print:hidden">
         <Sidebar />
       </div>
-      <div className="flex flex-col flex-1 ml-16 min-w-0 print:ml-0">
+      <div className="flex flex-col flex-1 sm:ml-16 min-w-0 print:ml-0">
         <div className="print:hidden">
           <Header title={pageTitles[Object.keys(pageTitles).find((r) => pathname === r || pathname.startsWith(r + '/')) ?? ''] } />
         </div>
-        <main className="flex-1 overflow-y-auto p-6 print:overflow-visible print:p-0">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 pb-20 sm:pb-6 print:overflow-visible print:p-0">
           {children}
         </main>
       </div>

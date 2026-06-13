@@ -95,7 +95,8 @@ export default function InventoryPage() {
           </div>
         )}
 
-        <table className="fg-table">
+        <div className="overflow-x-auto">
+          <table className="fg-table">
           <thead>
             <tr>
               <th>Item</th>
@@ -185,7 +186,8 @@ export default function InventoryPage() {
               })
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </Card>
     </div>
   );

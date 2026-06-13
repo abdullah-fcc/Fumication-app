@@ -86,7 +86,8 @@ export default function LocationsPage() {
           </div>
         )}
 
-        <table className="fg-table">
+        <div className="overflow-x-auto">
+          <table className="fg-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -170,7 +171,8 @@ export default function LocationsPage() {
               ))
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </Card>
     </div>
   );

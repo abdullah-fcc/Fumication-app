@@ -55,7 +55,8 @@ export default function ReportViewPage() {
         </div>
       </div>
 
-      <div className="report-sheet bg-white border border-gray-900 text-[11px] text-gray-900 mx-auto max-w-5xl">
+      <div className="overflow-x-auto print:overflow-visible">
+      <div className="report-sheet bg-white border border-gray-900 text-[11px] text-gray-900 mx-auto max-w-5xl min-w-[900px] print:min-w-0">
         {/* Title bar */}
         <div className="grid grid-cols-[1fr_auto] border-b border-gray-900">
           <div className="flex items-center justify-center p-3">
@@ -229,6 +230,7 @@ export default function ReportViewPage() {
             </tr>
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );

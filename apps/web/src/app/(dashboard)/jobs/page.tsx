@@ -85,7 +85,8 @@ export default function JobsPage() {
           </span>
         </div>
 
-        <table className="fg-table">
+        <div className="overflow-x-auto">
+          <table className="fg-table">
           <thead>
             <tr>
               <th>Job</th>
@@ -173,7 +174,8 @@ export default function JobsPage() {
               ))
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </Card>
     </div>
   );

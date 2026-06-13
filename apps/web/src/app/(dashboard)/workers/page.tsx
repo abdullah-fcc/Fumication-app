@@ -59,7 +59,8 @@ export default function WorkersPage() {
           <span className="text-xs text-gray-400 ml-auto">{filtered.length} worker{filtered.length !== 1 ? 's' : ''}</span>
         </div>
 
-        <table className="fg-table">
+        <div className="overflow-x-auto">
+          <table className="fg-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -117,7 +118,8 @@ export default function WorkersPage() {
               ))
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </Card>
     </div>
   );

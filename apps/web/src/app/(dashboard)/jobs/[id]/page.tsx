@@ -525,26 +525,26 @@ export default function JobDetailPage() {
   return (
     <div className="space-y-5">
       {/* Back + title row */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.back()}
-            className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+            className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors flex-shrink-0"
           >
             <ChevronLeft size={16} />
           </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-gray-900">{job.title}</h1>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-lg font-semibold text-gray-900 truncate">{job.title}</h1>
               <StatusBadge status={job.status} />
             </div>
-            <p className="text-sm text-gray-400 mt-0.5">
+            <p className="text-sm text-gray-400 mt-0.5 truncate">
               {job.location_name ?? 'No location assigned'}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {error && <p className="text-xs text-red-500">{error}</p>}
           {actions.map(({ next, label, variant }) => (
             <Button

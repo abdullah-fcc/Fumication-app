@@ -23,7 +23,8 @@ export default function ReportsPage() {
       />
 
       <Card>
-        <table className="fg-table">
+        <div className="overflow-x-auto">
+          <table className="fg-table">
           <thead>
             <tr>
               <th>Job</th>
@@ -86,7 +87,8 @@ export default function ReportsPage() {
               ))
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </Card>
     </div>
   );
