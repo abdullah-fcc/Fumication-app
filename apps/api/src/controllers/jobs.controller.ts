@@ -91,6 +91,13 @@ export async function createJob(req: AuthRequest, res: Response) {
   }
 }
 
+// Workers may only move a job forward through its own lifecycle.
+// Admins/managers can set any status, including cancellation.
+const WORKER_ALLOWED_TRANSITIONS: Record<string, string[]> = {
+  scheduled: ['in_progress'],
+  in_progress: ['completed'],
+};
+
 export async function updateJobStatus(req: AuthRequest, res: Response) {
   const { status, notes } = req.body;
   const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled'];
@@ -98,7 +105,22 @@ export async function updateJobStatus(req: AuthRequest, res: Response) {
     res.status(400).json({ error: 'Invalid status' });
     return;
   }
+
+  const isWorker = req.user!.role === 'worker';
   try {
+    if (isWorker) {
+      const current = await pool.query('SELECT status FROM jobs WHERE id = $1', [req.params.id]);
+      if (!current.rows[0]) {
+        res.status(404).json({ error: 'Job not found' });
+        return;
+      }
+      const allowed = WORKER_ALLOWED_TRANSITIONS[current.rows[0].status] ?? [];
+      if (!allowed.includes(status)) {
+        res.status(403).json({ error: 'Workers cannot make this status change' });
+        return;
+      }
+    }
+
     const timestamps: Record<string, string> = {
       in_progress: ', started_at = NOW()',
       completed: ', completed_at = NOW()',
@@ -109,6 +131,62 @@ export async function updateJobStatus(req: AuthRequest, res: Response) {
        WHERE id = $3 RETURNING *`,
       [status, notes, req.params.id]
     );
+    const job = result.rows[0];
+    if (!job) {
+      res.status(404).json({ error: 'Job not found' });
+      return;
+    }
+
+    if (status === 'completed') {
+      await notifyAdminsJobCompleted(job, req.user!.id);
+    }
+
+    res.json(job);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+async function notifyAdminsJobCompleted(job: any, workerId: string) {
+  const [admins, worker] = await Promise.all([
+    pool.query(`SELECT id FROM users WHERE role IN ('admin', 'manager')`),
+    pool.query('SELECT name FROM users WHERE id = $1', [workerId]),
+  ]);
+  const workerName = worker.rows[0]?.name ?? 'A worker';
+  const title = 'Job completed';
+  const body = `${workerName} marked "${job.title}" as completed.`;
+  for (const admin of admins.rows) {
+    await pool.query(
+      `INSERT INTO notifications (user_id, title, body, type) VALUES ($1, $2, $3, $4)`,
+      [admin.id, title, body, 'job_completed']
+    );
+  }
+}
+
+export async function updateJob(req: AuthRequest, res: Response) {
+  const { title, description, location_id, scheduled_at, notes } = req.body;
+  if (!title || !scheduled_at) {
+    res.status(400).json({ error: 'title and scheduled_at are required' });
+    return;
+  }
+  try {
+    const result = await pool.query(
+      `UPDATE jobs SET
+         title        = $1,
+         description  = $2,
+         location_id  = $3,
+         scheduled_at = $4,
+         notes        = $5,
+         updated_at   = NOW()
+       WHERE id = $6
+       RETURNING *`,
+      [title, description ?? null, location_id ?? null, scheduled_at, notes ?? null, req.params.id]
+    );
+    if (!result.rows[0]) {
+      res.status(404).json({ error: 'Job not found' });
+      return;
+    }
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

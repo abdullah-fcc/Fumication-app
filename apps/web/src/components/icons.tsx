@@ -29,4 +29,6 @@ export {
   ArrowRight,
   X,
   Navigation,
+  Bell,
+  Download,
 } from 'lucide-react';

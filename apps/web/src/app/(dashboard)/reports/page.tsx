@@ -1,12 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 import api from '@/lib/api';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonRows } from '@/components/ui/Skeleton';
-import { FileText } from '@/components/icons';
+import { FileText, Eye } from '@/components/icons';
 
 export default function ReportsPage() {
   const { data: reports = [], isLoading } = useQuery({
@@ -31,6 +32,7 @@ export default function ReportsPage() {
               <th>Pests Found</th>
               <th>Date</th>
               <th>Signatures</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -38,7 +40,7 @@ export default function ReportsPage() {
               <SkeletonRows rows={5} cols={6} />
             ) : reports.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-0">
+                <td colSpan={7} className="p-0">
                   <EmptyState
                     icon={<FileText size={22} />}
                     title="No reports yet"
@@ -71,6 +73,14 @@ export default function ReportsPage() {
                         Client
                       </span>
                     </div>
+                  </td>
+                  <td>
+                    <Link
+                      href={`/reports/${r.id}`}
+                      className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 font-medium whitespace-nowrap"
+                    >
+                      <Eye size={14} /> View / Download
+                    </Link>
                   </td>
                 </tr>
               ))

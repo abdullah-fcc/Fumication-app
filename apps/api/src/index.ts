@@ -11,6 +11,7 @@ import inventoryRoutes from './routes/inventory.routes';
 import reportRoutes from './routes/reports.routes';
 import locationRoutes from './routes/locations.routes';
 import checkInRoutes from './routes/checkins.routes';
+import notificationRoutes from './routes/notifications.routes';
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'FumiGuard API is running', version: '1.0.0' });
@@ -33,6 +34,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/check-ins', checkInRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });

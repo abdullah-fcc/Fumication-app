@@ -126,6 +126,10 @@ CREATE TABLE IF NOT EXISTS reports (
   created_at        TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Structured data for the "Service Report" form (pesticides, methods, targets,
+-- monitoring trap grids, report type, etc.) — stored as JSON to avoid a wide table.
+ALTER TABLE reports ADD COLUMN IF NOT EXISTS form_data JSONB;
+
 -- ─────────────────────────────────────────
 -- REPORT CHEMICALS (chemicals used per report)
 -- ─────────────────────────────────────────

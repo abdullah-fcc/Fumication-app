@@ -75,6 +75,25 @@ body {
   vertical-align: middle;
 }
 
+/* ── Shared form input ──────────────────────────────── */
+.fg-input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: #111827;
+  background-color: #ffffff;
+}
+.fg-input::placeholder {
+  color: #9ca3af;
+}
+.fg-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #e0e7ff;
+  border-color: #4f46e5;
+}
+
 /* ── Shared filter row ──────────────────────────────── */
 .fg-filters {
   display: flex;
@@ -82,6 +101,18 @@ body {
   gap: 0.75rem;
   padding: 0.875rem 1rem;
   border-bottom: 1px solid #f3f4f6;
+}
+
+/* ── Printable report sheet ─────────────────────────── */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+  .report-sheet {
+    max-width: none !important;
+    font-size: 9px !important;
+  }
 }
 
 /* ── CSS-only ring indicator ────────────────────────── */

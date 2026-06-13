@@ -32,6 +32,14 @@ export async function checkIn(req: AuthRequest, res: Response) {
         [job_id, worker_id, lat, lng]
       );
     }
+
+    // First check-in on a scheduled job starts it and the work timer
+    await pool.query(
+      `UPDATE jobs SET status = 'in_progress', started_at = NOW(), updated_at = NOW()
+       WHERE id = $1 AND status = 'scheduled'`,
+      [job_id]
+    );
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);

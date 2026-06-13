@@ -35,7 +35,7 @@ export default function Sidebar() {
       </div>
 
       {/* Nav icons */}
-      <nav className="flex-1 flex flex-col items-center gap-1 py-4 overflow-y-auto">
+      <nav className="flex-1 flex flex-col items-center gap-1 py-4 overflow-hidden">
         {navItems.map(({ href, label, iconName }) => {
           const Icon   = iconMap[iconName];
           const active = pathname === href;

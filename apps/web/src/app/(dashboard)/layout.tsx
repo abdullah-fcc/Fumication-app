@@ -54,11 +54,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      <Sidebar />
-      <div className="flex flex-col flex-1 ml-16 min-w-0">
-        <Header title={pageTitles[Object.keys(pageTitles).find((r) => pathname === r || pathname.startsWith(r + '/')) ?? ''] } />
-        <main className="flex-1 overflow-y-auto p-6">
+    <div className="flex h-screen overflow-hidden bg-gray-50 print:h-auto print:overflow-visible print:bg-white">
+      <div className="print:hidden">
+        <Sidebar />
+      </div>
+      <div className="flex flex-col flex-1 ml-16 min-w-0 print:ml-0">
+        <div className="print:hidden">
+          <Header title={pageTitles[Object.keys(pageTitles).find((r) => pathname === r || pathname.startsWith(r + '/')) ?? ''] } />
+        </div>
+        <main className="flex-1 overflow-y-auto p-6 print:overflow-visible print:p-0">
           {children}
         </main>
       </div>

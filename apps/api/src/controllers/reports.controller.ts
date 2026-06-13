@@ -34,11 +34,34 @@ export async function getReportByJob(req: AuthRequest, res: Response) {
   }
 }
 
+export async function getReportById(req: AuthRequest, res: Response) {
+  try {
+    const result = await pool.query(
+      `SELECT r.*, j.title as job_title, l.name as location_name, l.address as location_address,
+              u.name as worker_name
+       FROM reports r
+       LEFT JOIN jobs j ON r.job_id = j.id
+       LEFT JOIN locations l ON j.location_id = l.id
+       LEFT JOIN users u ON r.worker_id = u.id
+       WHERE r.id = $1`,
+      [req.params.id]
+    );
+    if (!result.rows[0]) {
+      res.status(404).json({ error: 'Report not found' });
+      return;
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
 export async function createReport(req: AuthRequest, res: Response) {
   const {
     job_id, pests_found, areas_treated, before_photos,
     after_photos, worker_signature, client_signature, client_name,
-    notes, chemicals_used,
+    notes, chemicals_used, form_data,
   } = req.body;
 
   if (!job_id) {
@@ -52,12 +75,23 @@ export async function createReport(req: AuthRequest, res: Response) {
     const reportResult = await client.query(
       `INSERT INTO reports
         (job_id, worker_id, pests_found, areas_treated, before_photos,
-         after_photos, worker_signature, client_signature, client_name, notes)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+         after_photos, worker_signature, client_signature, client_name, notes, form_data)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+       ON CONFLICT (job_id) DO UPDATE SET
+         pests_found = EXCLUDED.pests_found,
+         areas_treated = EXCLUDED.areas_treated,
+         before_photos = EXCLUDED.before_photos,
+         after_photos = EXCLUDED.after_photos,
+         worker_signature = EXCLUDED.worker_signature,
+         client_signature = EXCLUDED.client_signature,
+         client_name = EXCLUDED.client_name,
+         notes = EXCLUDED.notes,
+         form_data = EXCLUDED.form_data
+       RETURNING *`,
       [
         job_id, req.user!.id, pests_found, areas_treated,
         before_photos, after_photos, worker_signature,
-        client_signature, client_name, notes,
+        client_signature, client_name, notes, form_data,
       ]
     );
     const report = reportResult.rows[0];
