@@ -1,5 +1,5 @@
-// Point this at your API server's LAN IP when testing on a physical device
-// with Expo Go (localhost won't work from a real phone). Find your IP with
-// `ipconfig getifaddr en0` (Mac) — it's the same IP shown by `npm run dev`
-// under "Network: http://<ip>:3000".
-export const API_URL = 'http://192.168.100.20:5000';
+// Live production API (Vercel). Works from any network.
+// For local development against `npm run dev`, temporarily point this at
+// your machine's LAN IP instead, e.g. 'http://192.168.x.x:5000'
+// (find it with `ipconfig getifaddr en0` on Mac).
+export const API_URL = 'https://fumication-app.vercel.app';
