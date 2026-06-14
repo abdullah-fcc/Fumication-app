@@ -20,7 +20,13 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.abdullah_fcc.fumiguardworker"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +38,11 @@
           "locationWhenInUsePermission": "FumiGuard Worker uses your location to confirm check-in at job sites."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "12bc1265-4610-4965-a8fb-94c0ca4dc7ee"
+      }
+    }
   }
 }
