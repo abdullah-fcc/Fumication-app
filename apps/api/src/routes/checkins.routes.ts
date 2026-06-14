@@ -7,7 +7,7 @@ const router = Router();
 // Worker submits their GPS location for a job
 router.post('/', authenticate, requireRole('worker'), checkIn);
 
-// Admin / manager sees who checked in to a specific job
-router.get('/job/:jobId', authenticate, requireRole('admin', 'manager'), getCheckInsForJob);
+// Admin/manager see who checked in; workers can check their own check-in status
+router.get('/job/:jobId', authenticate, requireRole('admin', 'manager', 'worker'), getCheckInsForJob);
 
 export default router;

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: fumiguard-api
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npm run build -w @fumiguard/api
+    startCommand: npm run start -w @fumiguard/api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
