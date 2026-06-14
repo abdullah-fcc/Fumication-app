@@ -40,8 +40,10 @@ app.use((_req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`FumiGuard API running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`FumiGuard API running on port ${PORT}`);
+  });
+}
 
 export default app;
