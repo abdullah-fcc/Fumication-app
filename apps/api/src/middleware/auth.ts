@@ -33,3 +33,21 @@ export function requireRole(...roles: string[]) {
     next();
   };
 }
+
+// Allows a request through if the caller is acting on their own record
+// (req.params[idParam] matches their own id) OR holds one of the given roles.
+// Used to stop users from reading/editing other accounts by changing the
+// :id in the URL (insecure direct object reference).
+export function requireSelfOrRole(idParam: string, ...roles: string[]) {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      res.status(401).json({ error: 'No token provided' });
+      return;
+    }
+    if (req.user.id === req.params[idParam] || roles.includes(req.user.role)) {
+      next();
+      return;
+    }
+    res.status(403).json({ error: 'Insufficient permissions' });
+  };
+}

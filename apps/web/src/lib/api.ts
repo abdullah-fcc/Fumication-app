@@ -23,7 +23,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 && typeof window !== 'undefined') {
+    // The login request itself returning 401 just means "wrong credentials" —
+    // that's handled by the login form's own error state, not a session expiry.
+    const isLoginRequest = err.config?.url?.includes('/api/auth/login');
+    if (err.response?.status === 401 && !isLoginRequest && typeof window !== 'undefined') {
       clearToken();
       window.location.href = '/login';
     }

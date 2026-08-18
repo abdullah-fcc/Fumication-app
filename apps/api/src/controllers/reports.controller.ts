@@ -2,16 +2,35 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { pool } from '../db';
 
+// Workers only see reports they filed; clients only see reports for jobs at
+// their own locations; admins/managers see everything. Prevents one worker
+// or client from reading another's job/report data.
+function scopeToRole(req: AuthRequest, query: string, params: any[]): string {
+  const role = req.user!.role;
+  if (role === 'worker') {
+    params.push(req.user!.id);
+    return `${query} WHERE r.worker_id = $${params.length}`;
+  }
+  if (role === 'client') {
+    params.push(req.user!.id);
+    return `${query} WHERE l.client_id = $${params.length}`;
+  }
+  return query;
+}
+
 export async function getReports(req: AuthRequest, res: Response) {
   try {
-    const result = await pool.query(
+    const params: any[] = [];
+    const query = scopeToRole(
+      req,
       `SELECT r.*, j.title as job_title, l.name as location_name, u.name as worker_name
        FROM reports r
        LEFT JOIN jobs j ON r.job_id = j.id
        LEFT JOIN locations l ON j.location_id = l.id
-       LEFT JOIN users u ON r.worker_id = u.id
-       ORDER BY r.created_at DESC`
+       LEFT JOIN users u ON r.worker_id = u.id`,
+      params
     );
+    const result = await pool.query(`${query} ORDER BY r.created_at DESC`, params);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -21,12 +40,21 @@ export async function getReports(req: AuthRequest, res: Response) {
 
 export async function getReportByJob(req: AuthRequest, res: Response) {
   try {
-    const result = await pool.query(
-      `SELECT r.*, u.name as worker_name FROM reports r
+    const params: any[] = [req.params.jobId];
+    let query = `SELECT r.*, u.name as worker_name FROM reports r
+       LEFT JOIN jobs j ON r.job_id = j.id
+       LEFT JOIN locations l ON j.location_id = l.id
        LEFT JOIN users u ON r.worker_id = u.id
-       WHERE r.job_id = $1`,
-      [req.params.jobId]
-    );
+       WHERE r.job_id = $1`;
+    const role = req.user!.role;
+    if (role === 'worker') {
+      params.push(req.user!.id);
+      query += ` AND r.worker_id = $${params.length}`;
+    } else if (role === 'client') {
+      params.push(req.user!.id);
+      query += ` AND l.client_id = $${params.length}`;
+    }
+    const result = await pool.query(query, params);
     res.json(result.rows[0] || null);
   } catch (err) {
     console.error(err);
@@ -36,16 +64,23 @@ export async function getReportByJob(req: AuthRequest, res: Response) {
 
 export async function getReportById(req: AuthRequest, res: Response) {
   try {
-    const result = await pool.query(
-      `SELECT r.*, j.title as job_title, l.name as location_name, l.address as location_address,
+    const params: any[] = [req.params.id];
+    let query = `SELECT r.*, j.title as job_title, l.name as location_name, l.address as location_address,
               u.name as worker_name
        FROM reports r
        LEFT JOIN jobs j ON r.job_id = j.id
        LEFT JOIN locations l ON j.location_id = l.id
        LEFT JOIN users u ON r.worker_id = u.id
-       WHERE r.id = $1`,
-      [req.params.id]
-    );
+       WHERE r.id = $1`;
+    const role = req.user!.role;
+    if (role === 'worker') {
+      params.push(req.user!.id);
+      query += ` AND r.worker_id = $${params.length}`;
+    } else if (role === 'client') {
+      params.push(req.user!.id);
+      query += ` AND l.client_id = $${params.length}`;
+    }
+    const result = await pool.query(query, params);
     if (!result.rows[0]) {
       res.status(404).json({ error: 'Report not found' });
       return;

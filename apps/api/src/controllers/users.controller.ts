@@ -34,7 +34,11 @@ export async function getUserById(req: AuthRequest, res: Response) {
 }
 
 export async function updateUser(req: AuthRequest, res: Response) {
-  const { name, phone, avatar_url, is_active } = req.body;
+  const { name, phone, avatar_url } = req.body;
+  // Only admins/managers may change account status — a self-service edit
+  // must not be able to re-activate or deactivate the caller's own account.
+  const isPrivileged = req.user?.role === 'admin' || req.user?.role === 'manager';
+  const is_active = isPrivileged ? req.body.is_active : undefined;
   try {
     const result = await pool.query(
       `UPDATE users SET
@@ -47,9 +51,13 @@ export async function updateUser(req: AuthRequest, res: Response) {
        RETURNING id, name, email, role, phone, avatar_url, is_active`,
       [name, phone, avatar_url, is_active, req.params.id]
     );
+    if (!result.rows[0]) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error('updateUser failed:', (err as Error)?.message);
     res.status(500).json({ error: 'Server error' });
   }
 }

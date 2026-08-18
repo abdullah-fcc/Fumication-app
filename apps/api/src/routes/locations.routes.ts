@@ -6,7 +6,8 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get('/',     getLocations);
+// Locations aren't on the worker/client nav (see apps/web rbac.ts) — match that here.
+router.get('/',     requireRole('admin', 'manager'), getLocations);
 router.post('/',    requireRole('admin', 'manager'), createLocation);
 router.put('/:id',  requireRole('admin', 'manager'), updateLocation);
 router.delete('/:id', requireRole('admin'),          deleteLocation);

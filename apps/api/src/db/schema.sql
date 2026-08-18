@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   firebase_uid    VARCHAR(128) UNIQUE,
   name            VARCHAR(255) NOT NULL,
   email           VARCHAR(255) UNIQUE NOT NULL,
+  password_hash   TEXT,
   role            VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'manager', 'worker', 'client')),
   phone           VARCHAR(20),
   avatar_url      TEXT,
@@ -18,6 +19,10 @@ CREATE TABLE IF NOT EXISTS users (
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Defense-in-depth: guarantee one account per email regardless of casing,
+-- even if a future code path forgets to normalize before insert.
+CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_unique_idx ON users (LOWER(email));
 
 -- ─────────────────────────────────────────
 -- WAREHOUSES (multi-location stock storage)

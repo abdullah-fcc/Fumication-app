@@ -10,6 +10,15 @@ export async function checkIn(req: AuthRequest, res: Response) {
   }
   const worker_id = req.user!.id;
   try {
+    const assignment = await pool.query(
+      'SELECT 1 FROM job_assignments WHERE job_id = $1 AND worker_id = $2',
+      [job_id, worker_id]
+    );
+    if (assignment.rows.length === 0) {
+      res.status(403).json({ error: 'You are not assigned to this job' });
+      return;
+    }
+
     // Upsert: re-checking in updates the timestamp and coordinates
     const existing = await pool.query(
       'SELECT id FROM check_ins WHERE job_id = $1 AND worker_id = $2',
