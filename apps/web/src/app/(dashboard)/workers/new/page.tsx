@@ -111,7 +111,7 @@ export default function NewWorkerPage() {
               label="Email address"
               id="email"
               type="email"
-              placeholder="e.g. ali@fumiguard.com"
+              placeholder="e.g. ali@instafumigation.com"
               value={form.email}
               onChange={(e) => set('email', e.target.value)}
               error={errors.email}

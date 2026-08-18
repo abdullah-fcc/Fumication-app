@@ -81,7 +81,7 @@ export default function SignaturePad({ value, onChange, label }: SignaturePadPro
       <div className="flex items-center justify-between mb-1">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{label}</p>
         {hasInk && (
-          <button type="button" onClick={clear} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">
+          <button type="button" onClick={clear} className="text-xs text-brand-600 hover:text-brand-700 font-medium">
             Clear
           </button>
         )}

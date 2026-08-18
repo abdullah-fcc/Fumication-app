@@ -19,7 +19,8 @@ interface ReportLike {
 }
 
 const BORDER: [number, number, number] = [17, 24, 39];
-const LIME_600: [number, number, number] = [101, 163, 13];
+const BRAND_NAVY: [number, number, number] = [1, 44, 127];   // #012C7F
+const BRAND_RED: [number, number, number] = [205, 4, 18];     // #CD0412
 const SKY_100: [number, number, number] = [224, 242, 254];
 const SKY_700: [number, number, number] = [3, 105, 161];
 const EMERALD_100: [number, number, number] = [209, 250, 229];
@@ -28,7 +29,7 @@ const RED_100: [number, number, number] = [254, 226, 226];
 const RED_700: [number, number, number] = [185, 28, 28];
 const ORANGE_100: [number, number, number] = [255, 237, 213];
 const ORANGE_50: [number, number, number] = [255, 247, 240];
-const LIME_50: [number, number, number] = [247, 254, 231];
+const BRAND_50: [number, number, number] = [238, 243, 252];  // #EEF3FC
 
 const TRAP_SECTIONS: { key: 'glue_trap' | 'live_trap' | 'mouse_trap'; label: string }[] = [
   { key: 'glue_trap', label: 'Glue Trap' },
@@ -52,7 +53,7 @@ export function generateReportPdf(report: ReportLike) {
   const titleHeight = 16;
   const titleLeftWidth = usableWidth - 60;
   doc.rect(margin, margin, titleLeftWidth, titleHeight);
-  doc.setFillColor(...LIME_600);
+  doc.setFillColor(...BRAND_NAVY);
   doc.rect(margin + (titleLeftWidth - 60) / 2, margin + 2, 60, titleHeight - 4, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
@@ -60,6 +61,16 @@ export function generateReportPdf(report: ReportLike) {
   doc.text('SERVICE REPORT', margin + titleLeftWidth / 2, margin + titleHeight / 2, {
     align: 'center', baseline: 'middle',
   });
+
+  // Company lockup, left of the title bar
+  doc.setTextColor(...BRAND_NAVY);
+  doc.setFontSize(8);
+  doc.text('INSTA FUMIGATION & PEST CONTROL SERVICES', margin + 2, margin + 6);
+  doc.setTextColor(...BRAND_RED);
+  doc.setFont('helvetica', 'bolditalic');
+  doc.setFontSize(7);
+  doc.text('Because We Can!', margin + 2, margin + 10.5);
+  doc.setFont('helvetica', 'bold');
 
   doc.setTextColor(...BORDER);
   doc.rect(margin + titleLeftWidth, margin, 60, titleHeight);
@@ -136,7 +147,7 @@ export function generateReportPdf(report: ReportLike) {
     startY: y,
     margin: { left: margin, right: margin },
     theme: 'grid',
-    styles: { fontSize: 8, cellPadding: 1.5, lineColor: BORDER, textColor: BORDER, fillColor: LIME_50 },
+    styles: { fontSize: 8, cellPadding: 1.5, lineColor: BORDER, textColor: BORDER, fillColor: BRAND_50 },
     body: [[
       { content: 'Section I. Pesticide Application', styles: { fontStyle: 'bold', cellWidth: 55 } },
       'As per IPM basic principle, use pesticides only when no other options are left. Pesticides are '
@@ -199,7 +210,7 @@ export function generateReportPdf(report: ReportLike) {
     startY: y,
     margin: { left: margin, right: margin },
     theme: 'grid',
-    styles: { fontSize: 7.5, cellPadding: 1.5, lineColor: BORDER, textColor: BORDER, fillColor: LIME_50 },
+    styles: { fontSize: 7.5, cellPadding: 1.5, lineColor: BORDER, textColor: BORDER, fillColor: BRAND_50 },
     body: [[
       { content: 'Section II. Monitoring & Servicing', styles: { fontStyle: 'bold', cellWidth: 55 } },
       'Status: Okay / Damage / Lost / N.A\nAction: No Need / Replaced / New / Unmount / Mounted',

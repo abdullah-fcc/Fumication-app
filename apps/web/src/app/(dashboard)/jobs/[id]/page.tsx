@@ -11,7 +11,7 @@ import { Card, CardHeader, CardBody } from '@/components/ui/Card';
 import StatusBadge from '@/components/StatusBadge';
 import {
   ChevronLeft, MapPin, Calendar, ClipboardList, Navigation,
-  CheckCircle2, Clock, Pencil, Trash2, X,
+  CheckCircle2, Clock, Pencil, Trash2, X, AlertTriangle,
 } from '@/components/icons';
 
 type JobStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
@@ -52,7 +52,7 @@ function WorkerCheckInCard({ jobId }: { jobId: string }) {
     queryKey: ['check-ins', jobId],
     queryFn: () => api.get(`/api/check-ins/job/${jobId}`).then((r) => r.data),
   });
-  const existing = (checkIns as any[]).find((c) => c.worker_email === currentUser?.email);
+  const existing = (checkIns as any[]).find((c) => c.worker_id === currentUser?.id);
   const alreadyCheckedIn = status === 'done' || !!existing;
   const display = checkedIn ?? (existing
     ? {
@@ -170,8 +170,8 @@ function AdminCheckInsCard({ jobId }: { jobId: string }) {
               <li key={ci.id} className="rounded-lg bg-gray-50 border border-gray-100 px-4 py-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-indigo-700">
+                    <div className="w-7 h-7 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-brand-700">
                         {ci.worker_name.charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -180,9 +180,20 @@ function AdminCheckInsCard({ jobId }: { jobId: string }) {
                       <p className="text-xs text-gray-400 truncate">{ci.worker_email}</p>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full flex-shrink-0">
-                    <CheckCircle2 size={11} /> On site
-                  </span>
+                  {/* Reflects the geofence check the API now actually performs —
+                      this badge used to read "On site" for every check-in. */}
+                  {ci.is_within_geofence ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full flex-shrink-0">
+                      <CheckCircle2 size={11} /> On site
+                    </span>
+                  ) : (
+                    <span
+                      title="Reported location is outside this site's geofence"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full flex-shrink-0"
+                    >
+                      <AlertTriangle size={11} /> Off site
+                    </span>
+                  )}
                 </div>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
                   <span className="flex items-center gap-1">
@@ -197,7 +208,7 @@ function AdminCheckInsCard({ jobId }: { jobId: string }) {
                       href={`https://maps.google.com/maps?q=${ci.lat},${ci.lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-medium"
+                      className="flex items-center gap-1 text-brand-600 hover:text-brand-700 font-medium"
                     >
                       <MapPin size={11} />
                       {ci.lat}, {ci.lng} — View on map
@@ -248,7 +259,7 @@ function RescheduleControl({ job, jobId }: { job: any; jobId: string }) {
         {(job.status === 'scheduled') && (
           <button
             onClick={() => { setValue(toDatetimeLocal(job.scheduled_at)); setEditing(true); }}
-            className="text-gray-400 hover:text-indigo-600 transition-colors"
+            className="text-gray-400 hover:text-brand-600 transition-colors"
             title="Reschedule"
           >
             <Pencil size={13} />
@@ -264,7 +275,7 @@ function RescheduleControl({ job, jobId }: { job: any; jobId: string }) {
         type="datetime-local"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600"
+        className="text-sm border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-600"
       />
       <Button size="sm" loading={mutation.isPending} onClick={() => mutation.mutate(value)}>
         Save
@@ -292,7 +303,7 @@ function JobReportCard({ jobId, jobStatus }: { jobId: string; jobStatus: JobStat
         {report ? (
           <Link
             href={`/reports/${report.id}`}
-            className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            className="flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 font-medium"
           >
             <ClipboardList size={15} />
             View / download report
@@ -389,7 +400,7 @@ function AssignedWorkersCard({ job, jobId }: { job: any; jobId: string }) {
         title="Assigned Workers"
         subtitle={`${(job.workers ?? []).length} assigned`}
         actions={!isWorker && !editing ? (
-          <button onClick={startEditing} className="text-gray-400 hover:text-indigo-600 transition-colors" title="Reassign">
+          <button onClick={startEditing} className="text-gray-400 hover:text-brand-600 transition-colors" title="Reassign">
             <Pencil size={13} />
           </button>
         ) : undefined}
@@ -404,13 +415,13 @@ function AssignedWorkersCard({ job, jobId }: { job: any; jobId: string }) {
               {(allWorkers as any[]).map((w: any) => (
                 <label key={w.id} className={[
                   'flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors',
-                  selected.includes(w.id) ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-gray-300',
+                  selected.includes(w.id) ? 'border-brand-600 bg-brand-50' : 'border-gray-200 hover:border-gray-300',
                 ].join(' ')}>
                   <input
                     type="checkbox"
                     checked={selected.includes(w.id)}
                     onChange={() => toggle(w.id)}
-                    className="text-indigo-600 focus:ring-indigo-600 rounded"
+                    className="text-brand-600 focus:ring-brand-600 rounded"
                   />
                   <div>
                     <p className="text-sm font-medium text-gray-900">{w.name}</p>
@@ -437,8 +448,8 @@ function AssignedWorkersCard({ job, jobId }: { job: any; jobId: string }) {
         <ul className="divide-y divide-gray-50">
           {(job.workers as any[]).map((w: any) => (
             <li key={w.id} className="flex items-center gap-3 px-5 py-3">
-              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-semibold text-indigo-700">
+              <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-semibold text-brand-700">
                   {w.name.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -512,7 +523,7 @@ export default function JobDetailPage() {
     return (
       <div className="text-center py-20">
         <p className="text-sm text-gray-500">Job not found.</p>
-        <Link href="/jobs" className="text-indigo-600 text-sm mt-2 inline-block">Back to jobs</Link>
+        <Link href="/jobs" className="text-brand-600 text-sm mt-2 inline-block">Back to jobs</Link>
       </div>
     );
   }

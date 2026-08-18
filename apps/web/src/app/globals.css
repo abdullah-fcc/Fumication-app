@@ -1,22 +1,75 @@
 @import "tailwindcss";
 
-/* ── Design tokens ──────────────────────────────────── */
+/* ── Insta Fumigation brand palette ──────────────────
+   Navy  #012C7F — primary (logo shield house)
+   Red   #CD0412 — accent  (logo shield outline)
+   ──────────────────────────────────────────────────── */
 :root {
+  /* Brand navy */
+  --brand-50:   #eef3fc;
+  --brand-100:  #d6e1f6;
+  --brand-200:  #a9bfec;
+  --brand-300:  #7397dd;
+  --brand-400:  #3f6bc4;
+  --brand-500:  #1b47a3;
+  --brand-600:  #012c7f;
+  --brand-700:  #012366;
+  --brand-800:  #011b4d;
+  --brand-900:  #011338;
+  --brand-950:  #000a20;
+
+  /* Brand red */
+  --accent-50:  #fef2f2;
+  --accent-100: #fddddf;
+  --accent-200: #fab7bb;
+  --accent-300: #f58089;
+  --accent-400: #eb4a56;
+  --accent-500: #dc1d2b;
+  --accent-600: #cd0412;
+  --accent-700: #a9030f;
+  --accent-800: #85030c;
+  --accent-900: #620209;
+
+  /* Semantic tokens */
   --bg:           #f4f6f8;
   --surface:      #ffffff;
   --border:       #e5e7eb;
-  --border-focus: #4f46e5;
+  --border-focus: var(--brand-600);
   --text:         #111827;
   --muted:        #6b7280;
-  --primary:      #4f46e5;
-  --primary-h:    #4338ca;
-  --primary-ring: #c7d2fe;
+  --primary:      var(--brand-600);
+  --primary-h:    var(--brand-700);
+  --primary-ring: var(--brand-100);
 }
 
+/* Expose the brand scales to Tailwind as `brand-*` / `accent-*` utilities */
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--text);
   --font-sans: var(--font-geist-sans);
+
+  --color-brand-50:  var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+
+  --color-accent-50:  var(--accent-50);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-accent-900: var(--accent-900);
 }
 
 *,
@@ -90,8 +143,8 @@ body {
 }
 .fg-input:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #e0e7ff;
-  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px var(--primary-ring);
+  border-color: var(--brand-600);
 }
 
 /* ── Shared filter row ──────────────────────────────── */
@@ -132,7 +185,7 @@ body {
   inset: -8px;
   border-radius: 50%;
   border: 8px solid transparent;
-  border-top-color: #4f46e5;
-  border-right-color: #4f46e5;
+  border-top-color: var(--brand-600);
+  border-right-color: var(--brand-600);
   transform: rotate(-45deg);
 }

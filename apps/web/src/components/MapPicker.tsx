@@ -224,13 +224,13 @@ export default function MapPicker({ lat, lng, onChange }: MapPickerProps) {
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearch(); } }}
             onFocus={() => { if (suggestions.length) setShowSuggestions(true); }}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            className="flex-1 rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600"
+            className="flex-1 rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-600"
           />
           <button
             type="button"
             onClick={handleSearch}
             disabled={searching}
-            className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 disabled:opacity-50 transition-colors"
           >
             {searching ? '…' : 'Search'}
           </button>
@@ -245,7 +245,7 @@ export default function MapPicker({ lat, lng, onChange }: MapPickerProps) {
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => selectSuggestion(s)}
-                  className="flex w-full items-start gap-2 px-3.5 py-2 text-left text-sm text-gray-700 hover:bg-indigo-50"
+                  className="flex w-full items-start gap-2 px-3.5 py-2 text-left text-sm text-gray-700 hover:bg-brand-50"
                 >
                   <Search size={14} className="mt-0.5 text-gray-400 flex-shrink-0" />
                   <span>{s.formatted}</span>
@@ -267,7 +267,7 @@ export default function MapPicker({ lat, lng, onChange }: MapPickerProps) {
 
       {/* Coordinates */}
       <div className="flex items-center gap-2 text-xs text-gray-500">
-        <MapPin size={12} className="text-indigo-500 flex-shrink-0" />
+        <MapPin size={12} className="text-brand-500 flex-shrink-0" />
         {lat != null && lng != null ? (
           <span>
             Pin at <span className="font-medium text-gray-700">{lat}, {lng}</span>

@@ -19,14 +19,15 @@ export default function App() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#4f46e5" />
+        <ActivityIndicator color="#012c7f" />
       </View>
     );
   }
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      <StatusBar style="auto" />
+      {/* Navy brand header once signed in, light login screen before that. */}
+      <StatusBar style={user ? 'light' : 'dark'} />
       {user ? <AppNavigator /> : <LoginScreen />}
     </AuthContext.Provider>
   );

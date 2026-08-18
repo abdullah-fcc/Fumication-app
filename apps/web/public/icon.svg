@@ -1,5 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#4f46e5"/>
-  <path fill="#ffffff" d="M256 72c52 36 110 56 168 60v120c0 104-66 184-168 216-102-32-168-112-168-216V132c58-4 116-24 168-60z"/>
-  <path fill="#4f46e5" d="M236 296l-44-44 24-24 20 20 64-64 24 24z"/>
+<!-- Insta Fumigation mark: navy house inside a red shield. Brand: #012C7F / #CD0412 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Insta Fumigation">
+  <rect width="512" height="512" rx="96" fill="#ffffff"/>
+  <!-- red shield outline -->
+  <path fill="none" stroke="#CD0412" stroke-width="26" stroke-linecap="round"
+        d="M256 74c-30 34-74 52-118 56 0 96 6 158 34 206M256 74c30 34 74 52 118 56 0 96-6 158-34 206"/>
+  <path fill="#CD0412" d="M186 392c22 26 45 40 70 46 25-6 48-20 70-46-24 12-47 18-70 18s-46-6-70-18z"/>
+  <!-- navy house -->
+  <path fill="#012C7F" d="M256 138 118 268h38v104h64v-72h48v72h64V268h38L332 190v-38h-34v6z"/>
 </svg>

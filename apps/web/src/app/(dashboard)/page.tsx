@@ -27,7 +27,7 @@ function MetricCard({
           <p className="text-3xl font-bold text-gray-900 leading-none">{value}</p>
           {sub && <p className={`text-xs mt-1.5 font-medium ${subColor}`}>{sub}</p>}
         </div>
-        <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 flex-shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 flex-shrink-0">
           {icon}
         </div>
       </div>
@@ -121,7 +121,7 @@ function WorkerDashboard({ userId }: { userId: string }) {
           title="Assigned Jobs"
           value={allJobs.length}
           sub={upcoming.length > 0 ? `${upcoming.length} upcoming` : 'No upcoming jobs'}
-          subColor={upcoming.length > 0 ? 'text-indigo-600' : 'text-gray-400'}
+          subColor={upcoming.length > 0 ? 'text-brand-600' : 'text-gray-400'}
           icon={<Briefcase size={20} />}
         />
         <MetricCard
@@ -147,7 +147,7 @@ function WorkerDashboard({ userId }: { userId: string }) {
             <h2 className="text-sm font-semibold text-gray-900">Upcoming Jobs</h2>
             <p className="text-xs text-gray-400 mt-0.5">Your scheduled tasks and deadlines</p>
           </div>
-          <Link href="/jobs" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">
+          <Link href="/jobs" className="text-xs text-brand-600 hover:text-brand-700 font-medium">
             View all
           </Link>
         </div>
@@ -167,7 +167,7 @@ function WorkerDashboard({ userId }: { userId: string }) {
                 ? 'text-red-600 bg-red-50 border-red-100'
                 : diffDays <= 3
                 ? 'text-amber-600 bg-amber-50 border-amber-100'
-                : 'text-indigo-600 bg-indigo-50 border-indigo-100';
+                : 'text-brand-600 bg-brand-50 border-brand-100';
               const urgencyLabel = diffDays < 0
                 ? 'Overdue'
                 : diffDays === 0
@@ -207,7 +207,7 @@ function WorkerDashboard({ userId }: { userId: string }) {
                           day: 'numeric', month: 'short', year: 'numeric',
                         })}
                       </div>
-                      <div className="flex items-center gap-1 mt-0.5 text-sm font-bold text-indigo-600 justify-end">
+                      <div className="flex items-center gap-1 mt-0.5 text-sm font-bold text-brand-600 justify-end">
                         <Clock size={13} />
                         {date.toLocaleTimeString('en-PK', {
                           hour: '2-digit', minute: '2-digit', hour12: true,
@@ -261,11 +261,11 @@ function AdminDashboard() {
           title="Total Jobs"
           value={total}
           sub={scheduled > 0 ? `${scheduled} scheduled` : 'No upcoming jobs'}
-          subColor={scheduled > 0 ? 'text-indigo-600' : 'text-gray-400'}
+          subColor={scheduled > 0 ? 'text-brand-600' : 'text-gray-400'}
           icon={<Briefcase size={20} />}
         >
           <div className="space-y-2 pt-1">
-            <MiniBar label="Scheduled"   count={scheduled}  total={total} color="bg-indigo-500" />
+            <MiniBar label="Scheduled"   count={scheduled}  total={total} color="bg-brand-500" />
             <MiniBar label="In Progress" count={inProgress} total={total} color="bg-amber-400" />
             <MiniBar label="Completed"   count={completed}  total={total} color="bg-emerald-400" />
           </div>
@@ -286,7 +286,7 @@ function AdminDashboard() {
             <div className="w-px h-10 bg-gray-100" />
             <div className="space-y-1">
               <p className="text-xs text-gray-400">Scheduled</p>
-              <p className="text-xl font-bold text-indigo-600">{scheduled}</p>
+              <p className="text-xl font-bold text-brand-600">{scheduled}</p>
             </div>
             <div className="w-px h-10 bg-gray-100" />
             <RingIndicator value={workers.length} label="Workers" />
@@ -328,7 +328,7 @@ function AdminDashboard() {
               <h2 className="text-sm font-semibold text-gray-900">Recent Jobs</h2>
               <p className="text-xs text-gray-400 mt-0.5">Latest scheduled activity</p>
             </div>
-            <Link href="/jobs" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/jobs" className="text-xs text-brand-600 hover:text-brand-700 font-medium">
               View all
             </Link>
           </div>
@@ -378,15 +378,15 @@ function AdminDashboard() {
               <div>
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Workers</p>
                 <p className="text-3xl font-bold text-gray-900">{workers.length}</p>
-                <p className="text-xs text-indigo-600 font-medium mt-1">Field staff</p>
+                <p className="text-xs text-brand-600 font-medium mt-1">Field staff</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+              <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
                 <Users size={20} />
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-1.5 bg-indigo-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-600 w-full rounded-full" />
+              <div className="flex-1 h-1.5 bg-brand-100 rounded-full overflow-hidden">
+                <div className="h-full bg-brand-600 w-full rounded-full" />
               </div>
               <span className="text-xs text-gray-400 flex-shrink-0">Active</span>
             </div>
@@ -405,7 +405,7 @@ function AdminDashboard() {
             </div>
             <div className="grid grid-cols-2 gap-3 pt-1">
               <div className="rounded-lg bg-gray-50 p-3 text-center">
-                <p className="text-lg font-bold text-indigo-600">{scheduled}</p>
+                <p className="text-lg font-bold text-brand-600">{scheduled}</p>
                 <p className="text-xs text-gray-400 mt-0.5">Scheduled</p>
               </div>
               <div className="rounded-lg bg-gray-50 p-3 text-center">

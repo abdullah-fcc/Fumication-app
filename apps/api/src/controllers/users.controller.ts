@@ -40,6 +40,16 @@ export async function updateUser(req: AuthRequest, res: Response) {
   const isPrivileged = req.user?.role === 'admin' || req.user?.role === 'manager';
   const is_active = isPrivileged ? req.body.is_active : undefined;
   try {
+    // A manager may administer staff, but not other administrators: otherwise
+    // one manager account could deactivate every admin and leave admin-only
+    // actions (like deleting users) belonging to nobody.
+    if (req.user?.role === 'manager' && req.params.id !== req.user.id) {
+      const target = await pool.query('SELECT role FROM users WHERE id = $1', [req.params.id]);
+      if (target.rows[0]?.role === 'admin') {
+        res.status(403).json({ error: 'Managers cannot modify administrator accounts' });
+        return;
+      }
+    }
     const result = await pool.query(
       `UPDATE users SET
         name = COALESCE($1, name),

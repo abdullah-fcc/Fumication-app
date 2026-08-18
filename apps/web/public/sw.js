@@ -1,12 +1,16 @@
-// Minimal PWA service worker for FumiGuard Pro.
+// Minimal PWA service worker for Insta Fumigation & Pest Control Services.
 // Safe to delete: removing this file + manifest.json + the registration in
 // src/app/layout.tsx fully reverts the app to plain web (no PWA behavior).
 
-const CACHE_NAME = 'fumiguard-static-v1';
+const CACHE_NAME = 'insta-fumigation-static-v2';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-maskable-512.png',
+  '/apple-touch-icon.png',
+  '/logo-mark.png',
+  '/logo.png',
 ];
 
 self.addEventListener('install', (event) => {

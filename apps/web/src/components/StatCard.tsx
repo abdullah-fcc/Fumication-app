@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-type Tone = 'teal' | 'blue' | 'amber' | 'red';
+type Tone = 'brand' | 'accent' | 'amber' | 'green';
 
 interface StatCardProps {
   title: string;
@@ -11,13 +11,13 @@ interface StatCardProps {
 }
 
 const toneClasses: Record<Tone, string> = {
-  teal:  'bg-indigo-50  text-indigo-700',
-  blue:  'bg-blue-50  text-blue-700',
-  amber: 'bg-amber-50 text-amber-700',
-  red:   'bg-red-50   text-red-600',
+  brand:  'bg-brand-50  text-brand-700',
+  accent: 'bg-accent-50 text-accent-600',
+  amber:  'bg-amber-50  text-amber-700',
+  green:  'bg-green-50  text-green-700',
 };
 
-export default function StatCard({ title, value, subtitle, icon, tone = 'teal' }: StatCardProps) {
+export default function StatCard({ title, value, subtitle, icon, tone = 'brand' }: StatCardProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-center gap-4">
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${toneClasses[tone]}`}>

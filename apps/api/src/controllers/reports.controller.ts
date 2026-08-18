@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { pool } from '../db';
+import { isAssignedToJob } from '../db/access';
 
 // Workers only see reports they filed; clients only see reports for jobs at
 // their own locations; admins/managers see everything. Prevents one worker
@@ -92,6 +93,12 @@ export async function getReportById(req: AuthRequest, res: Response) {
   }
 }
 
+class InsufficientStockError extends Error {
+  constructor(public inventoryId: string) {
+    super('Insufficient stock');
+  }
+}
+
 export async function createReport(req: AuthRequest, res: Response) {
   const {
     job_id, pests_found, areas_treated, before_photos,
@@ -102,6 +109,33 @@ export async function createReport(req: AuthRequest, res: Response) {
   if (!job_id) {
     res.status(400).json({ error: 'job_id is required' });
     return;
+  }
+
+  // A worker may only file a report for a job they're actually on. Without
+  // this, any worker could overwrite another crew's signed report — the
+  // upsert below replaces an existing row rather than rejecting it.
+  if (req.user!.role === 'worker' && !(await isAssignedToJob(job_id, req.user!.id))) {
+    res.status(403).json({ error: 'You are not assigned to this job' });
+    return;
+  }
+
+  // ── F-03: inventory movements are attacker-supplied — validate before
+  // they reach an arithmetic UPDATE. A negative value would invert the
+  // subtraction and create stock out of nothing.
+  if (chemicals_used != null && !Array.isArray(chemicals_used)) {
+    res.status(400).json({ error: 'chemicals_used must be an array' });
+    return;
+  }
+  for (const chem of chemicals_used ?? []) {
+    const qty = Number(chem?.quantity_used);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      res.status(400).json({ error: 'Each chemical needs a quantity_used greater than zero' });
+      return;
+    }
+    if (!chem?.inventory_id) {
+      res.status(400).json({ error: 'Each chemical needs an inventory_id' });
+      return;
+    }
   }
 
   const client = await pool.connect();
@@ -138,10 +172,17 @@ export async function createReport(req: AuthRequest, res: Response) {
            VALUES ($1, $2, $3, $4)`,
           [report.id, chem.inventory_id, chem.quantity_used, chem.unit]
         );
-        await client.query(
-          'UPDATE inventory SET quantity = quantity - $1, updated_at = NOW() WHERE id = $2',
+        // Guarded so concurrent reports can't race stock below zero; if the
+        // balance is short, the whole report transaction rolls back.
+        const stock = await client.query(
+          `UPDATE inventory SET quantity = quantity - $1, updated_at = NOW()
+           WHERE id = $2 AND quantity >= $1
+           RETURNING id`,
           [chem.quantity_used, chem.inventory_id]
         );
+        if (stock.rows.length === 0) {
+          throw new InsufficientStockError(chem.inventory_id);
+        }
       }
     }
 
@@ -154,6 +195,10 @@ export async function createReport(req: AuthRequest, res: Response) {
     res.status(201).json(report);
   } catch (err) {
     await client.query('ROLLBACK');
+    if (err instanceof InsufficientStockError) {
+      res.status(409).json({ error: 'Not enough stock on hand for one of the chemicals used' });
+      return;
+    }
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   } finally {

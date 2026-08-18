@@ -15,8 +15,18 @@ import notificationRoutes from './routes/notifications.routes';
 
 dotenv.config();
 
+// Refuse to run unauthenticated-by-accident: without a signing secret every
+// token check fails closed, but the cause is invisible in the 401s it produces.
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is not set — refusing to start without it.');
+}
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Vercel terminates TLS upstream, so the client IP is in X-Forwarded-For.
+// Without this the rate limiter buckets every request under the proxy address.
+app.set('trust proxy', 1);
 
 // Browser clients that are allowed to call this API with credentials/headers.
 // Native apps (mobile) and server-to-server calls send no Origin header at all,
@@ -27,9 +37,11 @@ const PROD_ORIGIN = 'https://fumication-app-web.vercel.app';
 const LOCALHOST_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/;
 
 app.use(helmet());
+const allowLocalhost = process.env.NODE_ENV !== 'production';
+
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || origin === PROD_ORIGIN || LOCALHOST_ORIGIN.test(origin)) {
+    if (!origin || origin === PROD_ORIGIN || (allowLocalhost && LOCALHOST_ORIGIN.test(origin))) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -41,6 +53,10 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
 
 // Tighter limiter on auth endpoints specifically, to slow down credential
 // stuffing / brute-force login and mass-registration attempts.
+// NOTE: this uses express-rate-limit's default in-memory store. On Vercel each
+// serverless instance keeps its own counter, so the effective ceiling is higher
+// than `max` and resets constantly. Backing it with a shared store (Redis /
+// Upstash) is required to make this a real brute-force control in production.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
@@ -52,7 +68,7 @@ app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
 
 app.get('/health', (_req, res) => {
-  res.json({ status: 'FumiGuard API is running', version: '1.0.0' });
+  res.json({ status: 'Insta Fumigation API is running', version: '1.0.0' });
 });
 
 app.use('/api/auth', authRoutes);
@@ -83,7 +99,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`FumiGuard API running on port ${PORT}`);
+    console.log(`Insta Fumigation API running on port ${PORT}`);
   });
 }
 

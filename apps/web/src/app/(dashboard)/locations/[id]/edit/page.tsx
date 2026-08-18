@@ -118,7 +118,7 @@ export default function EditLocationPage() {
     return (
       <div className="max-w-2xl">
         <p className="text-sm text-red-600">Location not found.</p>
-        <button onClick={() => router.back()} className="text-sm text-indigo-600 mt-2">Go back</button>
+        <button onClick={() => router.back()} className="text-sm text-brand-600 mt-2">Go back</button>
       </div>
     );
   }

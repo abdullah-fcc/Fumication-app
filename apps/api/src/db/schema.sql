@@ -112,6 +112,19 @@ CREATE TABLE IF NOT EXISTS inventory (
   updated_at           TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Defense in depth for stock movements: the API validates quantities before
+-- deducting, but the ledger for regulated chemicals shouldn't be able to hold
+-- an impossible balance even if a future code path forgets to check.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'inventory_quantity_non_negative'
+  ) THEN
+    ALTER TABLE inventory
+      ADD CONSTRAINT inventory_quantity_non_negative CHECK (quantity >= 0);
+  END IF;
+END $$;
+
 -- ─────────────────────────────────────────
 -- REPORTS (fumigation job reports + signatures)
 -- ─────────────────────────────────────────

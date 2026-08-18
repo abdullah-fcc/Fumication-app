@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Shield, LayoutDashboard, Briefcase,
+  LayoutDashboard, Briefcase,
   Users, Package, FileText, MapPin,
 } from '@/components/icons';
+import { LogoMark, BRAND_FULL_NAME } from '@/components/Logo';
 import { getStoredUser } from '@/lib/auth';
 import { getNavItemsForRole } from '@/lib/rbac';
 import type { LucideProps } from 'lucide-react';
@@ -31,9 +32,9 @@ export default function Sidebar() {
 
         {/* Logo */}
         <div className="flex items-center justify-center h-14 border-b border-gray-100 flex-shrink-0">
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-            <Shield size={15} className="text-white" />
-          </div>
+          <Link href="/" title={BRAND_FULL_NAME} className="flex items-center justify-center">
+            <LogoMark size={30} />
+          </Link>
         </div>
 
         {/* Nav icons */}
@@ -51,7 +52,7 @@ export default function Sidebar() {
                   className={[
                     'flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-150',
                     active
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-brand-600 text-white shadow-sm'
                       : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700',
                   ].join(' ')}
                 >
@@ -85,7 +86,7 @@ export default function Sidebar() {
               href={href}
               className={[
                 'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors',
-                active ? 'text-indigo-600' : 'text-gray-400',
+                active ? 'text-brand-600' : 'text-gray-400',
               ].join(' ')}
             >
               {Icon && <Icon size={18} strokeWidth={active ? 2.5 : 2} />}

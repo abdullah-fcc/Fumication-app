@@ -13,8 +13,8 @@ export function Checkbox({ label, id, className = '', ...props }: CheckboxProps)
         type="checkbox"
         id={checkId}
         className={[
-          'h-4 w-4 rounded border-gray-300 text-indigo-700',
-          'focus:ring-2 focus:ring-indigo-600 focus:ring-offset-0',
+          'h-4 w-4 rounded border-gray-300 text-brand-700',
+          'focus:ring-2 focus:ring-brand-600 focus:ring-offset-0',
           'cursor-pointer',
           className,
         ].join(' ')}

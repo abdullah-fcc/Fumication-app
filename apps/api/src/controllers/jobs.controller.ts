@@ -1,9 +1,19 @@
 import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { pool } from '../db';
+import { isAssignedToJob } from '../db/access';
+
+// A worker is only ever allowed to see jobs they're assigned to. The scope
+// is derived from the token, never from the query string — a client-supplied
+// worker_id used to be the only thing narrowing this list, which meant simply
+// omitting it returned every job in the company.
+function scopeWorkerId(req: AuthRequest): unknown {
+  return req.user!.role === 'worker' ? req.user!.id : req.query.worker_id;
+}
 
 export async function getJobs(req: AuthRequest, res: Response) {
-  const { status, worker_id } = req.query;
+  const { status } = req.query;
+  const worker_id = scopeWorkerId(req);
   try {
     let query = `
       SELECT j.*, l.name as location_name, l.address as location_address,
@@ -36,6 +46,12 @@ export async function getJobs(req: AuthRequest, res: Response) {
 
 export async function getJobById(req: AuthRequest, res: Response) {
   try {
+    // 404 rather than 403 — a worker probing ids shouldn't be able to tell
+    // "this job exists but isn't yours" from "no such job".
+    if (req.user!.role === 'worker' && !(await isAssignedToJob(req.params.id, req.user!.id))) {
+      res.status(404).json({ error: 'Job not found' });
+      return;
+    }
     const jobResult = await pool.query(
       `SELECT j.*, l.name as location_name, l.address, l.lat, l.lng, l.geo_fence_radius
        FROM jobs j LEFT JOIN locations l ON j.location_id = l.id WHERE j.id = $1`,
@@ -45,8 +61,13 @@ export async function getJobById(req: AuthRequest, res: Response) {
       res.status(404).json({ error: 'Job not found' });
       return;
     }
+    // Crew contact details are management information — a worker sees only
+    // who else is on the job, not how to reach them.
+    const crewFields = req.user!.role === 'worker'
+      ? 'u.id, u.name'
+      : 'u.id, u.name, u.email, u.phone';
     const workersResult = await pool.query(
-      `SELECT u.id, u.name, u.email, u.phone FROM users u
+      `SELECT ${crewFields} FROM users u
        JOIN job_assignments ja ON u.id = ja.worker_id WHERE ja.job_id = $1`,
       [req.params.id]
     );
@@ -109,6 +130,10 @@ export async function updateJobStatus(req: AuthRequest, res: Response) {
   const isWorker = req.user!.role === 'worker';
   try {
     if (isWorker) {
+      if (!(await isAssignedToJob(req.params.id, req.user!.id))) {
+        res.status(404).json({ error: 'Job not found' });
+        return;
+      }
       const current = await pool.query('SELECT status FROM jobs WHERE id = $1', [req.params.id]);
       if (!current.rows[0]) {
         res.status(404).json({ error: 'Job not found' });

@@ -15,7 +15,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Jobs">
+      <Stack.Navigator
+        initialRouteName="Jobs"
+        screenOptions={{
+          headerStyle: { backgroundColor: '#012c7f' },   // brand navy
+          headerTintColor: '#ffffff',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
+      >
         <Stack.Screen name="Jobs" component={JobsScreen} options={{ title: 'My Jobs' }} />
         <Stack.Screen name="JobDetail" component={JobDetailScreen} options={{ title: 'Job Details' }} />
         <Stack.Screen name="Report" component={ReportScreen} options={{ title: 'Service Report' }} />

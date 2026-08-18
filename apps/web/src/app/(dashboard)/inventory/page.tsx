@@ -81,7 +81,7 @@ export default function InventoryPage() {
               placeholder="Search items or warehouse…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
             />
           </div>
           <span className="text-xs text-gray-400 ml-auto">
@@ -165,7 +165,7 @@ export default function InventoryPage() {
                       <div className="flex items-center justify-end gap-2">
                         <Link href={`/inventory/${item.id}/edit`}>
                           <button
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
                             title="Edit"
                           >
                             <Pencil size={14} />

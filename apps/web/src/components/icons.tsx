@@ -1,6 +1,5 @@
 // Central icon exports — import from here, never directly from lucide-react.
 export {
-  Shield,
   LayoutDashboard,
   Briefcase,
   Users,

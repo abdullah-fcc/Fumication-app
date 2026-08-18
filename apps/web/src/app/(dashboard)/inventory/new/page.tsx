@@ -134,7 +134,7 @@ export default function NewInventoryPage() {
                 placeholder="Short description of the item…"
                 value={form.description}
                 onChange={(e) => set('description', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 resize-none"
+                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-600 resize-none"
               />
             </div>
             <Input

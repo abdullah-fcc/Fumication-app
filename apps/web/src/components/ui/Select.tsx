@@ -22,7 +22,7 @@ export function Select({ label, error, id, className = '', children, ...props }:
           'focus:outline-none focus:ring-2 focus:ring-offset-0 transition-colors',
           error
             ? 'border-red-400 focus:border-red-400 focus:ring-red-200'
-            : 'border-gray-300 focus:border-indigo-600 focus:ring-indigo-100',
+            : 'border-gray-300 focus:border-brand-600 focus:ring-brand-100',
           className,
         ].join(' ')}
         {...props}

@@ -30,7 +30,7 @@ interface CheckIn {
   lat: string | number;
   lng: string | number;
   checked_in_at: string;
-  worker_email: string;
+  worker_id: string;
 }
 
 const NEXT_STATUS: Record<string, { next: string; label: string } | undefined> = {
@@ -56,7 +56,7 @@ export default function JobDetailScreen({ route, navigation }: Props) {
       api.get(`/api/reports/job/${jobId}`),
     ]);
     setJob(jobRes.data);
-    const mine = (checkInsRes.data as CheckIn[]).find((c) => c.worker_email === user?.email);
+    const mine = (checkInsRes.data as CheckIn[]).find((c) => c.worker_id === user?.id);
     setCheckIn(mine ?? null);
     setReport(reportRes.data ?? null);
   }, [jobId, user]);
@@ -111,7 +111,7 @@ export default function JobDetailScreen({ route, navigation }: Props) {
   if (loading || !job) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#4f46e5" />
+        <ActivityIndicator color="#012c7f" />
       </View>
     );
   }
@@ -171,7 +171,7 @@ export default function JobDetailScreen({ route, navigation }: Props) {
             </View>
           ) : (
             <TouchableOpacity style={styles.secondaryButton} onPress={handleCheckIn} disabled={checkInLoading}>
-              {checkInLoading ? <ActivityIndicator color="#4f46e5" /> : <Text style={styles.secondaryButtonText}>Share my location</Text>}
+              {checkInLoading ? <ActivityIndicator color="#012c7f" /> : <Text style={styles.secondaryButtonText}>Share my location</Text>}
             </TouchableOpacity>
           )}
         </View>
@@ -220,13 +220,13 @@ const styles = StyleSheet.create({
   checkedIn: { marginTop: 4 },
   checkedInText: { fontSize: 14, fontWeight: '600', color: '#047857' },
   primaryButton: {
-    backgroundColor: '#4f46e5', borderRadius: 10, paddingVertical: 14,
+    backgroundColor: '#012c7f', borderRadius: 10, paddingVertical: 14,
     alignItems: 'center', marginTop: 16,
   },
   primaryButtonText: { color: '#fff', fontWeight: '600', fontSize: 15 },
   secondaryButton: {
-    borderWidth: 1, borderColor: '#4f46e5', borderRadius: 10, paddingVertical: 12,
+    borderWidth: 1, borderColor: '#012c7f', borderRadius: 10, paddingVertical: 12,
     alignItems: 'center', marginTop: 8,
   },
-  secondaryButtonText: { color: '#4f46e5', fontWeight: '600', fontSize: 14 },
+  secondaryButtonText: { color: '#012c7f', fontWeight: '600', fontSize: 14 },
 });

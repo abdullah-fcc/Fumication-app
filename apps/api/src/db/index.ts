@@ -13,7 +13,11 @@ const connectionString = rawUrl
 
 export const pool = new Pool({
   connectionString,
-  ssl: { rejectUnauthorized: false },
+  // Verify the server certificate. Previously this was disabled, which left
+  // the connection encrypted but unauthenticated — anyone able to intercept
+  // the path to the database could present their own cert and read the lot.
+  // Neon serves a publicly-trusted certificate, so the default CA store works.
+  ssl: { rejectUnauthorized: true },
   max: 5,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 15000,

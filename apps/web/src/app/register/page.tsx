@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import api from '@/lib/api';
+import api, { getErrorMessage } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Shield, Eye, EyeOff } from '@/components/icons';
+import { Eye, EyeOff } from '@/components/icons';
+import { LogoMark, BRAND_FULL_NAME, BRAND_TAGLINE } from '@/components/Logo';
 
 interface FormErrors {
   name?: string;
@@ -43,8 +44,8 @@ function validate(fields: {
   }
   if (!fields.password) {
     errors.password = 'Password is required.';
-  } else if (fields.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters.';
+  } else if (fields.password.length < 12) {
+    errors.password = 'Password must be at least 12 characters.';
   }
   if (!fields.confirmPassword) {
     errors.confirmPassword = 'Please confirm your password.';
@@ -86,7 +87,7 @@ export default function RegisterPage() {
       setSuccess(true);
       setTimeout(() => router.push('/login'), 2000);
     } catch (err: any) {
-      setErrors({ general: err.response?.data?.error ?? 'Registration failed. Please try again.' });
+      setErrors({ general: getErrorMessage(err, 'Registration failed. Please try again.') });
     } finally {
       setLoading(false);
     }
@@ -112,10 +113,15 @@ export default function RegisterPage() {
       {/* Left — form */}
       <div className="flex flex-col w-full lg:w-1/2 px-8 sm:px-16 py-10 bg-white justify-center">
         <div className="flex items-center gap-2.5 mb-10">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
-            <Shield size={16} className="text-white" />
+          <LogoMark size={34} className="flex-shrink-0" />
+          <div className="leading-tight">
+            <span className="block font-bold text-brand-600 text-sm tracking-tight">
+              {BRAND_FULL_NAME}
+            </span>
+            <span className="block text-accent-600 text-xs font-medium italic">
+              {BRAND_TAGLINE}
+            </span>
           </div>
-          <span className="font-bold text-gray-900 text-sm tracking-tight">FumiGuard Pro</span>
         </div>
 
         <div className="mb-7">
@@ -157,7 +163,7 @@ export default function RegisterPage() {
             type={showPw ? 'text' : 'password'}
             id="password"
             autoComplete="new-password"
-            placeholder="At least 8 characters"
+            placeholder="At least 12 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
@@ -204,7 +210,7 @@ export default function RegisterPage() {
                   className={[
                     'flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                     role === value
-                      ? 'border-indigo-600 bg-indigo-50'
+                      ? 'border-brand-600 bg-brand-50'
                       : 'border-gray-200 hover:border-gray-300',
                   ].join(' ')}
                 >
@@ -214,7 +220,7 @@ export default function RegisterPage() {
                     value={value}
                     checked={role === value}
                     onChange={(e) => setRole(e.target.value)}
-                    className="mt-0.5 text-indigo-600 focus:ring-indigo-600"
+                    className="mt-0.5 text-brand-600 focus:ring-brand-600"
                   />
                   <span className="text-sm text-gray-700">{label}</span>
                 </label>
@@ -231,7 +237,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-gray-500">
             Already have an account?{' '}
-            <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/login" className="text-brand-600 hover:text-brand-700 font-medium">
               Sign in
             </Link>
           </p>
@@ -239,18 +245,19 @@ export default function RegisterPage() {
       </div>
 
       {/* Right — brand panel (same as login) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-indigo-600 flex-col items-center justify-center px-16 relative overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-indigo-500 opacity-40" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-indigo-700 opacity-50" />
+      <div className="hidden lg:flex lg:w-1/2 bg-brand-600 flex-col items-center justify-center px-16 relative overflow-hidden">
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-brand-500 opacity-40" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-brand-800 opacity-60" />
 
         <div className="relative z-10 text-center max-w-sm">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6">
-            <Shield size={32} className="text-white" />
+          <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <LogoMark size={64} />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-3 leading-tight">
-            Join FumiGuard<br />Pro today.
+          <h2 className="text-3xl font-bold text-white mb-2 leading-tight">
+            Join Insta<br />Fumigation today.
           </h2>
-          <p className="text-indigo-200 text-sm leading-relaxed">
+          <p className="text-accent-300 text-base font-medium italic mb-4">{BRAND_TAGLINE}</p>
+          <p className="text-brand-200 text-sm leading-relaxed">
             Pakistan&apos;s first digital platform for professional fumigation and pest control management.
           </p>
         </div>

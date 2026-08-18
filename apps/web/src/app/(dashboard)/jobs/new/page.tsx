@@ -134,7 +134,7 @@ export default function NewJobPage() {
                 placeholder="Additional details about the job…"
                 value={form.description}
                 onChange={(e) => set('description', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 resize-none"
+                className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-600 resize-none"
               />
             </div>
           </CardBody>
@@ -183,14 +183,14 @@ export default function NewJobPage() {
                   <label key={w.id} className={[
                     'flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors',
                     form.worker_ids.includes(w.id)
-                      ? 'border-indigo-600 bg-indigo-50'
+                      ? 'border-brand-600 bg-brand-50'
                       : 'border-gray-200 hover:border-gray-300',
                   ].join(' ')}>
                     <input
                       type="checkbox"
                       checked={form.worker_ids.includes(w.id)}
                       onChange={() => toggleWorker(w.id)}
-                      className="text-indigo-600 focus:ring-indigo-600 rounded"
+                      className="text-brand-600 focus:ring-brand-600 rounded"
                     />
                     <div>
                       <p className="text-sm font-medium text-gray-900">{w.name}</p>
@@ -213,7 +213,7 @@ export default function NewJobPage() {
               placeholder="Any special instructions or notes…"
               value={form.notes}
               onChange={(e) => set('notes', e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 resize-none"
+              className="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-600 resize-none"
             />
           </CardBody>
         </Card>

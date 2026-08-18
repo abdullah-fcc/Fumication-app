@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "FumiGuard Worker",
+    "name": "Insta Fumigation Worker",
     "slug": "fumiguard-worker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,12 +9,12 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "FumiGuard Worker uses your location to confirm check-in at job sites."
+        "NSLocationWhenInUseUsageDescription": "Insta Fumigation Worker uses your location to confirm check-in at job sites."
       }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -35,7 +35,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "FumiGuard Worker uses your location to confirm check-in at job sites."
+          "locationWhenInUsePermission": "Insta Fumigation Worker uses your location to confirm check-in at job sites."
         }
       ]
     ],

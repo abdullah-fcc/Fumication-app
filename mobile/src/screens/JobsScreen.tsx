@@ -53,7 +53,7 @@ export default function JobsScreen({ navigation }: Props) {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#4f46e5" />
+        <ActivityIndicator color="#012c7f" />
       </View>
     );
   }
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 20, fontWeight: '700', color: '#111827' },
   subtitle: { fontSize: 13, color: '#6b7280', marginTop: 2 },
-  logout: { fontSize: 13, color: '#4f46e5', fontWeight: '600' },
+  logout: { fontSize: 13, color: '#012c7f', fontWeight: '600' },
   list: { paddingHorizontal: 16, paddingBottom: 24, gap: 10 },
   empty: { textAlign: 'center', color: '#9ca3af', marginTop: 40, fontSize: 14 },
   card: {

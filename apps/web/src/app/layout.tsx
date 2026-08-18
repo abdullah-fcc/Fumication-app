@@ -7,22 +7,25 @@ import PWARegister from '@/components/PWARegister';
 const geist = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FumiGuard Pro — Admin',
-  description: 'Intelligent Fumigation & Pest Control Management System',
+  title: 'Insta Fumigation & Pest Control Services — Admin',
+  description: 'Fumigation & pest control operations platform — Because We Can!',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'FumiGuard',
+    title: 'Insta Fumigation',
   },
   icons: {
-    icon: '/icon-192.png',
+    icon: [
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
     apple: '/apple-touch-icon.png',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#4f46e5',
+  themeColor: '#012c7f',
   width: 'device-width',
   initialScale: 1,
 };

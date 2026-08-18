@@ -59,8 +59,13 @@ export default function ReportViewPage() {
       <div className="report-sheet bg-white border border-gray-900 text-[11px] text-gray-900 mx-auto max-w-5xl min-w-[900px] print:min-w-0">
         {/* Title bar */}
         <div className="grid grid-cols-[1fr_auto] border-b border-gray-900">
-          <div className="flex items-center justify-center p-3">
-            <div className="bg-lime-600 text-white font-bold text-xl px-8 py-3 rounded">SERVICE REPORT</div>
+          <div className="flex items-center justify-between gap-4 p-3">
+            <div className="leading-tight">
+              <p className="font-bold text-brand-600 text-[11px]">INSTA FUMIGATION &amp; PEST CONTROL SERVICES</p>
+              <p className="italic font-semibold text-accent-600 text-[10px]">Because We Can!</p>
+            </div>
+            <div className="bg-brand-600 text-white font-bold text-xl px-8 py-3 rounded">SERVICE REPORT</div>
+            <div className="w-32" aria-hidden />
           </div>
           <div className="border-l border-gray-900 p-2 text-[10px] leading-tight">
             <p><span className="font-semibold">Document #</span> IFPCS-IPM-13</p>
@@ -100,7 +105,7 @@ export default function ReportViewPage() {
         </div>
 
         {/* Section I */}
-        <div className="border-t border-gray-900 grid grid-cols-[220px_1fr] bg-lime-50">
+        <div className="border-t border-gray-900 grid grid-cols-[220px_1fr] bg-brand-50">
           <div className="p-2 font-semibold border-r border-gray-900">Section I. Pesticide Application</div>
           <div className="p-2 text-[10px]">
             As per IPM basic principle, use pesticides only when no other options are left. Pesticides are
@@ -157,7 +162,7 @@ export default function ReportViewPage() {
         </table>
 
         {/* Section II */}
-        <div className="grid grid-cols-[220px_1fr] border-t border-gray-900 bg-lime-50 text-[10px]">
+        <div className="grid grid-cols-[220px_1fr] border-t border-gray-900 bg-brand-50 text-[10px]">
           <div className="p-2 font-semibold border-r border-gray-900 flex items-center">Section II. Monitoring &amp; Servicing</div>
           <div className="p-2 leading-tight">
             <p><span className="font-semibold">Status:</span> ✅ Okay &nbsp; ⊞ Damage &nbsp; ❓ Lost &nbsp; ⊘ N.A</p>

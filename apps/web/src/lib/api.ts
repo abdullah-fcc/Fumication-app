@@ -34,4 +34,25 @@ api.interceptors.response.use(
   }
 );
 
+/**
+ * Turns an axios failure into something a user can act on.
+ *
+ * The distinction that matters: when the request never got a response at all
+ * (`err.response` undefined) the API is unreachable — wrong URL, server down,
+ * CORS/CSP block — which is NOT a credentials problem. Showing a generic
+ * "please try again" there sends people off hunting for a bad password.
+ */
+export function getErrorMessage(err: unknown, fallback: string): string {
+  const e = err as { response?: { data?: { error?: string } }; code?: string };
+
+  if (e?.response?.data?.error) return e.response.data.error;
+
+  if (!e?.response) {
+    const target = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    return `Can't reach the server at ${target}. Check that the API is running and that NEXT_PUBLIC_API_URL is set correctly.`;
+  }
+
+  return fallback;
+}
+
 export default api;

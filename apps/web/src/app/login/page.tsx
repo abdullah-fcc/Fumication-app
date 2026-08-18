@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import api from '@/lib/api';
+import api, { getErrorMessage } from '@/lib/api';
 import { storeAuth, type AuthUser } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Checkbox } from '@/components/ui/Checkbox';
-import { Shield, Eye, EyeOff, Briefcase, Users, Package } from '@/components/icons';
+import { Eye, EyeOff, Briefcase, Users, Package } from '@/components/icons';
+import { LogoMark, BRAND_FULL_NAME, BRAND_TAGLINE } from '@/components/Logo';
 
 interface FormErrors {
   email?: string;
@@ -61,7 +62,7 @@ export default function LoginPage() {
       storeAuth(data.token, data.user as AuthUser, remember);
       router.push('/');
     } catch (err: any) {
-      setErrors({ general: err.response?.data?.error ?? 'Sign in failed. Please try again.' });
+      setErrors({ general: getErrorMessage(err, 'Sign in failed. Please try again.') });
     } finally {
       setLoading(false);
     }
@@ -84,10 +85,15 @@ export default function LoginPage() {
       {/* Left — form */}
       <div className="flex flex-col w-full lg:w-1/2 px-8 sm:px-16 py-10 bg-white justify-center">
         <div className="flex items-center gap-2.5 mb-12">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
-            <Shield size={16} className="text-white" />
+          <LogoMark size={34} className="flex-shrink-0" />
+          <div className="leading-tight">
+            <span className="block font-bold text-brand-600 text-sm tracking-tight">
+              {BRAND_FULL_NAME}
+            </span>
+            <span className="block text-accent-600 text-xs font-medium italic">
+              {BRAND_TAGLINE}
+            </span>
           </div>
-          <span className="font-bold text-gray-900 text-sm tracking-tight">FumiGuard Pro</span>
         </div>
 
         <div className="mb-8">
@@ -131,7 +137,7 @@ export default function LoginPage() {
               checked={remember}
               onChange={(e) => setRemember(e.target.checked)}
             />
-            <Link href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/forgot-password" className="text-sm text-brand-600 hover:text-brand-700 font-medium">
               Forgot password
             </Link>
           </div>
@@ -142,7 +148,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-gray-500">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <Link href="/register" className="text-brand-600 hover:text-brand-700 font-medium">
               Sign up
             </Link>
           </p>
@@ -150,19 +156,20 @@ export default function LoginPage() {
       </div>
 
       {/* Right — brand panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-indigo-600 flex-col items-center justify-center px-16 relative overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-indigo-500 opacity-40" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-indigo-700 opacity-50" />
+      <div className="hidden lg:flex lg:w-1/2 bg-brand-600 flex-col items-center justify-center px-16 relative overflow-hidden">
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-brand-500 opacity-40" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-brand-800 opacity-60" />
 
         <div className="relative z-10 text-center max-w-sm">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6">
-            <Shield size={32} className="text-white" />
+          <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <LogoMark size={64} />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-3 leading-tight">
+          <h2 className="text-3xl font-bold text-white mb-2 leading-tight">
             Pest Control,<br />Digitized.
           </h2>
-          <p className="text-indigo-200 text-sm leading-relaxed mb-10">
-            FumiGuard Pro replaces paper-based workflows with a complete digital platform for Pakistan&apos;s fumigation industry.
+          <p className="text-accent-300 text-base font-medium italic mb-4">{BRAND_TAGLINE}</p>
+          <p className="text-brand-200 text-sm leading-relaxed mb-10">
+            Insta Fumigation replaces paper-based workflows with a complete digital platform for Pakistan&apos;s fumigation and pest control industry.
           </p>
           <ul className="space-y-4 text-left">
             {features.map(({ Icon, text }) => (
@@ -170,7 +177,7 @@ export default function LoginPage() {
                 <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
                   <Icon size={15} className="text-white" />
                 </div>
-                <span className="text-indigo-100 text-sm">{text}</span>
+                <span className="text-brand-100 text-sm">{text}</span>
               </li>
             ))}
           </ul>

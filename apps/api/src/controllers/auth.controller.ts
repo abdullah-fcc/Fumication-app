@@ -39,8 +39,10 @@ export async function register(req: Request, res: Response) {
     res.status(400).json({ error: 'Enter a valid email address' });
     return;
   }
-  if (password.length < 8 || password.length > 128) {
-    res.status(400).json({ error: 'Password must be between 8 and 128 characters' });
+  // 12 is the floor for new accounts. Length beats composition rules, and an
+  // 8-character password falls to an offline guess quickly.
+  if (password.length < 12 || password.length > 128) {
+    res.status(400).json({ error: 'Password must be between 12 and 128 characters' });
     return;
   }
   if (!SELF_REGISTER_ROLES.includes(role)) {

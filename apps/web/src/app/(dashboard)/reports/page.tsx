@@ -78,7 +78,7 @@ export default function ReportsPage() {
                   <td>
                     <Link
                       href={`/reports/${r.id}`}
-                      className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 font-medium whitespace-nowrap"
+                      className="flex items-center gap-1.5 text-brand-600 hover:text-brand-700 font-medium whitespace-nowrap"
                     >
                       <Eye size={14} /> View / Download
                     </Link>

@@ -53,7 +53,7 @@ export default function WorkersPage() {
               placeholder="Search by name or email…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500"
+              className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
             />
           </div>
           <span className="text-xs text-gray-400 ml-auto">{filtered.length} worker{filtered.length !== 1 ? 's' : ''}</span>
@@ -88,8 +88,8 @@ export default function WorkersPage() {
                 <tr key={w.id}>
                   <td>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs font-semibold text-indigo-700">
+                      <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-semibold text-brand-700">
                           {w.name.charAt(0).toUpperCase()}
                         </span>
                       </div>

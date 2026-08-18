@@ -219,7 +219,7 @@ export default function JobReportPage() {
                         type="checkbox"
                         checked={p.checked}
                         onChange={() => togglePesticide(i)}
-                        className="rounded text-indigo-600 focus:ring-indigo-600 flex-shrink-0 mt-0.5"
+                        className="rounded text-brand-600 focus:ring-brand-600 flex-shrink-0 mt-0.5"
                       />
                       {i < 4 ? (
                         <span className="text-sm text-gray-700">{p.name}</span>
@@ -255,7 +255,7 @@ export default function JobReportPage() {
                       type="checkbox"
                       checked={m.checked}
                       onChange={() => toggleChecklist('methods', i)}
-                      className="rounded text-indigo-600 focus:ring-indigo-600 flex-shrink-0"
+                      className="rounded text-brand-600 focus:ring-brand-600 flex-shrink-0"
                     />
                     {i < 10 ? (
                       <span className="text-sm text-gray-700">{m.name}</span>
@@ -283,7 +283,7 @@ export default function JobReportPage() {
                       type="checkbox"
                       checked={t.checked}
                       onChange={() => toggleChecklist('targets', i)}
-                      className="rounded text-indigo-600 focus:ring-indigo-600 flex-shrink-0"
+                      className="rounded text-brand-600 focus:ring-brand-600 flex-shrink-0"
                     />
                     {i < 10 ? (
                       <span className="text-sm text-gray-700">{t.name}</span>
@@ -410,7 +410,7 @@ function TrapGrid({ label, row, onChange }: { label: string; row: TrapRow; onCha
                   <select
                     value={row.status[n] ?? ''}
                     onChange={(e) => onChange('status', n, e.target.value)}
-                    className="w-14 h-7 text-xs border-0 focus:ring-1 focus:ring-indigo-500 bg-transparent"
+                    className="w-14 h-7 text-xs border-0 focus:ring-1 focus:ring-brand-500 bg-transparent"
                   >
                     {STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
@@ -426,7 +426,7 @@ function TrapGrid({ label, row, onChange }: { label: string; row: TrapRow; onCha
                     inputMode="numeric"
                     value={row.count[n] ?? ''}
                     onChange={(e) => onChange('count', n, e.target.value)}
-                    className="w-14 h-7 text-xs border-0 focus:ring-1 focus:ring-indigo-500 text-center bg-transparent"
+                    className="w-14 h-7 text-xs border-0 focus:ring-1 focus:ring-brand-500 text-center bg-transparent"
                   />
                 </td>
               ))}
@@ -438,7 +438,7 @@ function TrapGrid({ label, row, onChange }: { label: string; row: TrapRow; onCha
                   <select
                     value={row.action[n] ?? ''}
                     onChange={(e) => onChange('action', n, e.target.value)}
-                    className="w-14 h-7 text-xs border-0 focus:ring-1 focus:ring-indigo-500 bg-transparent"
+                    className="w-14 h-7 text-xs border-0 focus:ring-1 focus:ring-brand-500 bg-transparent"
                   >
                     {ACTION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>

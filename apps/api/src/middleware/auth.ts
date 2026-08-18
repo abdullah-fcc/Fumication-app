@@ -1,26 +1,48 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { pool } from '../db';
 
 export interface AuthRequest extends Request {
   user?: { id: string; role: string; email: string };
 }
 
-export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
+export async function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     res.status(401).json({ error: 'No token provided' });
     return;
   }
+  let decoded: { id: string; role: string; email: string };
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      id: string;
-      role: string;
-      email: string;
-    };
-    req.user = decoded;
-    next();
+    // The secret is read here rather than at module scope: this file is
+    // imported before dotenv.config() runs in some entrypoints, so a top-level
+    // read could capture undefined. index.ts asserts it exists at startup.
+    // The algorithm is pinned so a future key-type change can't open the door
+    // to algorithm confusion; this codebase only ever signs with HS256.
+    decoded = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ['HS256'] }) as typeof decoded;
   } catch {
     res.status(401).json({ error: 'Invalid token' });
+    return;
+  }
+
+  // Role and account status live in a 7-day token, so trusting the claims
+  // alone meant deactivating or demoting someone didn't take effect until it
+  // expired. Re-read the row so those changes apply on the very next request.
+  try {
+    const result = await pool.query(
+      'SELECT role, is_active FROM users WHERE id = $1',
+      [decoded.id]
+    );
+    const user = result.rows[0];
+    if (!user || user.is_active === false) {
+      res.status(401).json({ error: 'Account is no longer active' });
+      return;
+    }
+    req.user = { id: decoded.id, email: decoded.email, role: user.role };
+    next();
+  } catch (err) {
+    console.error('authenticate failed:', (err as Error)?.message);
+    res.status(500).json({ error: 'Server error' });
   }
 }
 

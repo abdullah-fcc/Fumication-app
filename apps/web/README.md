@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Insta Fumigation — Admin Web App
 
-## Getting Started
+Admin dashboard and installable PWA for **Insta Fumigation & Pest Control Services**
+— *Because We Can!*
 
-First, run the development server:
+Next.js (App Router) + Tailwind CSS v4.
+
+## Brand
+
+| Token | Value | Used for |
+| --- | --- | --- |
+| Navy (primary) | `#012C7F` | Primary actions, active nav, headers, links |
+| Red (accent) | `#CD0412` | Tagline, alerts, unread indicators |
+
+Both are exposed as Tailwind scales — `brand-50…950` and `accent-50…900` —
+defined in [`src/app/globals.css`](src/app/globals.css). Use those utilities
+(`bg-brand-600`, `text-accent-600`, …) rather than raw hex values or stock
+Tailwind palettes, so a future brand tweak stays a one-file change.
+
+The logo lives in [`src/components/Logo.tsx`](src/components/Logo.tsx):
+
+- `<LogoMark />` — shield + house symbol only, for tight spots (sidebar rail, mobile header)
+- `<Logo />` — full lockup with wordmark, for auth pages
+- `BRAND_NAME`, `BRAND_FULL_NAME`, `BRAND_TAGLINE` — brand strings; import these
+  instead of hardcoding the company name
+
+Source artwork: `insta fumigication logo.png` at the repo root. The icon set in
+`public/` (favicon, PWA icons, apple-touch-icon) is generated from it.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install          # from the repo root — this is an npm workspace
+npm run dev -w @insta-fumigation/web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The app expects the API at `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:5000`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+```bash
+npm run build        # production build
+npm run lint         # eslint
+```
 
-To learn more about Next.js, take a look at the following resources:
+## PWA
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The app is installable. Relevant files:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `public/manifest.json` — name, brand theme color, icon set
+- `public/sw.js` — minimal service worker; caches static assets only, never API
+  calls or navigations. Bump `CACHE_NAME` when static brand assets change.
+- `src/components/PWARegister.tsx` — registration
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deleting those three files fully reverts the app to plain web.

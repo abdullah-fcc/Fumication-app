@@ -1,11 +1,11 @@
 services:
   - type: web
-    name: fumiguard-api
+    name: insta-fumigation-api
     runtime: node
     plan: free
     rootDir: .
-    buildCommand: npm install && npm run build -w @fumiguard/api
-    startCommand: npm run start -w @fumiguard/api
+    buildCommand: npm install && npm run build -w @insta-fumigation/api
+    startCommand: npm run start -w @insta-fumigation/api
     envVars:
       - key: NODE_ENV
         value: production

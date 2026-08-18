@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
-  ActivityIndicator, KeyboardAvoidingView, Platform,
+  ActivityIndicator, KeyboardAvoidingView, Platform, Image,
 } from 'react-native';
 import api from '../lib/api';
 import { storeAuth, useAuth } from '../lib/auth';
@@ -37,10 +37,13 @@ export default function LoginScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <View style={styles.logo}>
-        <Text style={styles.logoText}>FG</Text>
-      </View>
-      <Text style={styles.title}>FumiGuard Worker</Text>
+      <Image
+        source={require('../../assets/logo.png')}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Text style={styles.title}>Insta Fumigation</Text>
+      <Text style={styles.tagline}>Because We Can!</Text>
       <Text style={styles.subtitle}>Sign in to view your jobs</Text>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -72,13 +75,13 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#f4f6f8' },
-  logo: {
-    width: 56, height: 56, borderRadius: 16, backgroundColor: '#4f46e5',
-    alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 16,
+  logo: { width: 200, height: 176, alignSelf: 'center', marginBottom: 12 },
+  title: { fontSize: 22, fontWeight: '700', color: '#012c7f', textAlign: 'center' },
+  tagline: {
+    fontSize: 14, fontWeight: '600', fontStyle: 'italic',
+    color: '#cd0412', textAlign: 'center', marginTop: 2,
   },
-  logoText: { color: '#fff', fontWeight: '700', fontSize: 20 },
-  title: { fontSize: 22, fontWeight: '700', color: '#111827', textAlign: 'center' },
-  subtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', marginTop: 4, marginBottom: 24 },
+  subtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', marginTop: 6, marginBottom: 24 },
   error: {
     color: '#b91c1c', backgroundColor: '#fee2e2', padding: 10, borderRadius: 8,
     marginBottom: 12, fontSize: 13, textAlign: 'center',
@@ -88,7 +91,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12, fontSize: 15, marginBottom: 12, backgroundColor: '#fff', color: '#111827',
   },
   button: {
-    backgroundColor: '#4f46e5', borderRadius: 10, paddingVertical: 14,
+    backgroundColor: '#012c7f', borderRadius: 10, paddingVertical: 14,
     alignItems: 'center', marginTop: 8,
   },
   buttonText: { color: '#fff', fontWeight: '600', fontSize: 15 },

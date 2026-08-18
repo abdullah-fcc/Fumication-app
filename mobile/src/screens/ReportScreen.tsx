@@ -136,7 +136,7 @@ export default function ReportScreen({ route, navigation }: Props) {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#4f46e5" />
+        <ActivityIndicator color="#012c7f" />
       </View>
     );
   }
@@ -360,16 +360,16 @@ const styles = StyleSheet.create({
   subLabel: { fontSize: 11, fontWeight: '700', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.5 },
   checklistRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   checkbox: {
-    width: 20, height: 20, borderRadius: 4, borderWidth: 1.5, borderColor: '#4f46e5',
+    width: 20, height: 20, borderRadius: 4, borderWidth: 1.5, borderColor: '#012c7f',
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  checkboxFill: { width: 12, height: 12, borderRadius: 2, backgroundColor: '#4f46e5' },
+  checkboxFill: { width: 12, height: 12, borderRadius: 2, backgroundColor: '#012c7f' },
   checklistLabel: { fontSize: 13, color: '#374151', flex: 1 },
   rateInput: { width: 90 },
   note: { fontSize: 12, color: '#9ca3af', marginTop: 8 },
   error: { fontSize: 12, color: '#b91c1c', textAlign: 'center' },
   submitButton: {
-    backgroundColor: '#4f46e5', borderRadius: 10, paddingVertical: 14,
+    backgroundColor: '#012c7f', borderRadius: 10, paddingVertical: 14,
     alignItems: 'center',
   },
   submitButtonText: { color: '#fff', fontWeight: '600', fontSize: 15 },
