@@ -20,6 +20,17 @@ export function getAllowedRoutes(role: Role): string[] {
   return rolePermissions[role] ?? [];
 }
 
+/**
+ * Where to send a user after they sign in.
+ *
+ * Not every role can see the dashboard root: a client is scoped to /reports,
+ * so sending everyone to '/' bounced them straight to /unauthorized and left
+ * them unable to use the app at all. First allowed route wins.
+ */
+export function getLandingRoute(role: Role): string {
+  return getAllowedRoutes(role)[0] ?? '/unauthorized';
+}
+
 // Labels shown in the sidebar for each route
 export interface NavItem {
   href: string;

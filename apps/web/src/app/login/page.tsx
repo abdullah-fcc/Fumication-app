@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api, { getErrorMessage } from '@/lib/api';
 import { storeAuth, type AuthUser } from '@/lib/auth';
+import { getLandingRoute } from '@/lib/rbac';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Checkbox } from '@/components/ui/Checkbox';
@@ -59,8 +60,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const { data } = await api.post('/api/auth/login', { email, password });
-      storeAuth(data.token, data.user as AuthUser, remember);
-      router.push('/');
+      const user = data.user as AuthUser;
+      storeAuth(data.token, user, remember);
+      router.push(getLandingRoute(user.role));
     } catch (err: any) {
       setErrors({ general: getErrorMessage(err, 'Sign in failed. Please try again.') });
     } finally {
